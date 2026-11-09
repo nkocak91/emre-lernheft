@@ -1,0 +1,971 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1D4ED8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Lernheft">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26'%3E%3Crect x='3' y='2' width='20' height='22' rx='3' fill='%231D4ED8'/%3E%3Cpath d='M8 2v22' stroke='white' stroke-width='2'/%3E%3C/svg%3E">
+<title>Emres Lernheft</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Lexend:wght@500;700;800&family=Caveat:wght@600&display=swap">
+<style>
+/* Layout: ein Schulheft auf Karopapier. Eine schmale Spalte (Handy zuerst), oben eine feste Leiste, Inhalte als Heftseiten. */
+:root{
+  --paper:#F7F9FC; --sheet:#FFFFFF; --grid:rgba(60,100,180,.075);
+  --ink:#16223A; --ink-soft:#4B5873; --line:#D9E0EC;
+  --blue:#1D4ED8; --blue-soft:#E3EBFF;
+  --red:#C8312F; --red-soft:#FCE8E6;
+  --green:#18794E; --green-soft:#E1F4EA;
+  --marker:#FFE45C; --marker-ink:#3A3000;
+  --s-mathe:#1D4ED8; --s-deutsch:#C8312F; --s-englisch:#B7791F; --s-bwr:#18794E; --s-physik:#7C3AED;
+  --f-display:"Lexend", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --f-hand:"Caveat", "Comic Sans MS", cursive;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0F141D; --sheet:#171E2B; --grid:rgba(140,170,230,.06);
+  --ink:#E8EDF7; --ink-soft:#A3AEC4; --line:#2B3547;
+  --blue:#8DAEFF; --blue-soft:#1E2B4A;
+  --red:#FF8A80; --red-soft:#3A1F22;
+  --green:#6FD3A0; --green-soft:#16302A;
+  --marker:#6B5A0E; --marker-ink:#FFF4C2;
+  --s-mathe:#8DAEFF; --s-deutsch:#FF8A80; --s-englisch:#F2C46B; --s-bwr:#6FD3A0; --s-physik:#C4A5FF;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --paper:#0F141D; --sheet:#171E2B; --grid:rgba(140,170,230,.06);
+  --ink:#E8EDF7; --ink-soft:#A3AEC4; --line:#2B3547;
+  --blue:#8DAEFF; --blue-soft:#1E2B4A;
+  --red:#FF8A80; --red-soft:#3A1F22;
+  --green:#6FD3A0; --green-soft:#16302A;
+  --marker:#6B5A0E; --marker-ink:#FFF4C2;
+  --s-mathe:#8DAEFF; --s-deutsch:#FF8A80; --s-englisch:#F2C46B; --s-bwr:#6FD3A0; --s-physik:#C4A5FF;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background:var(--paper); color:var(--ink); font-family:var(--f-body); font-size:17px; line-height:1.6;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:22px 22px;
+}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--sheet)}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;line-height:1.25;margin:0}
+h1{font-size:1.75rem;font-weight:800}
+h2{font-size:1.3rem;font-weight:700}
+h3{font-size:1.05rem;font-weight:700}
+p{margin:0}
+a{color:var(--blue)}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px;border-radius:6px}
+
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--sheet);border-bottom:1px solid var(--line);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:10px}
+.bar-in{max-width:780px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.logo{font-family:var(--f-display);font-weight:800;font-size:1.1rem;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px}
+.logo svg{flex:none}
+.crumb{color:var(--ink-soft);font-size:.92rem;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.back{margin-left:auto;border:1px solid var(--line);background:var(--sheet);border-radius:999px;padding:6px 14px;font-size:.92rem}
+
+main{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px 64px}
+.wrap{max-width:780px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+
+.sheet{background:var(--sheet);border:1px solid var(--line);border-radius:14px;padding:22px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.hand{font-family:var(--f-hand);font-size:1.45rem;color:var(--blue);line-height:1.1}
+.muted{color:var(--ink-soft)}
+.small{font-size:.9rem}
+
+.hello{display:flex;flex-direction:column;gap:8px}
+.subjects{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.subj{display:flex;flex-direction:column;gap:6px;text-align:left;background:var(--sheet);border:1px solid var(--line);border-radius:14px;padding:16px 16px 14px;border-top:6px solid var(--c);text-decoration:none;color:var(--ink)}
+.subj:hover{border-color:var(--c)}
+.subj .n{font-family:var(--f-display);font-weight:700;font-size:1.15rem}
+.subj .d{font-size:.92rem;color:var(--ink-soft)}
+.meter{height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--c,var(--blue));border-radius:99px}
+.meter-row{display:flex;align-items:center;gap:10px;font-size:.85rem;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.meter-row .meter{flex:1}
+
+.plan ol{margin:0;padding-left:1.4em;display:flex;flex-direction:column;gap:6px}
+
+.topics{display:flex;flex-direction:column;gap:10px}
+.topic{display:flex;gap:14px;align-items:flex-start;background:var(--sheet);border:1px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink)}
+.topic:hover{border-color:var(--c)}
+.topic .tx{min-width:0;display:flex;flex-direction:column;gap:2px}
+.topic .t{font-family:var(--f-display);font-weight:700}
+.chk{flex:none;width:28px;height:28px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;margin-top:2px}
+.chk.on{background:var(--green);border-color:var(--green);color:var(--sheet)}
+.tag{display:inline-block;font-size:.75rem;letter-spacing:.04em;text-transform:uppercase;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--blue-soft);color:var(--blue);width:fit-content}
+.tag.i{background:var(--red-soft);color:var(--red)}
+.tag.probe{background:var(--marker);color:var(--marker-ink)}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.2;margin:0 2px;font-variant-numeric:tabular-nums}
+.fr>span:first-child{border-bottom:1.5px solid currentColor;padding:0 3px}
+.fr>span:last-child{padding:0 3px}
+.vec{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.2;padding:1px 7px;border-left:2px solid currentColor;border-right:2px solid currentColor;border-radius:9px;margin:0 2px;font-variant-numeric:tabular-nums}
+.warn{border:2px solid var(--red);background:var(--red-soft);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.warn>b:first-child{color:var(--red);font-family:var(--f-display)}
+.lv{display:inline-flex;gap:3px;margin-left:8px;vertical-align:middle}
+.lv i{width:8px;height:8px;border-radius:50%;background:var(--line)}
+.lv i.on{background:var(--blue)}
+.keys{display:flex;gap:6px}
+.key{border:1px solid var(--line);background:var(--paper);border-radius:8px;min-width:44px;min-height:44px;font-family:var(--f-display);font-weight:700;font-size:1.1rem}
+.probe-card{border:2px solid var(--s-mathe);background:var(--sheet);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:10px}
+.probe-card .row a{text-decoration:none}
+.qq input{min-height:44px}
+.opt{min-height:48px}
+
+.head{display:flex;flex-direction:column;gap:8px;border-left:6px solid var(--c);padding-left:14px}
+
+.toc{display:flex;flex-wrap:wrap;gap:8px}
+.toc a{font-size:.88rem;text-decoration:none;border:1px solid var(--line);background:var(--sheet);color:var(--ink);padding:5px 12px;border-radius:99px}
+
+.sec-title{display:flex;align-items:baseline;gap:10px}
+.sec-title .no{font-family:var(--f-display);font-weight:800;color:var(--c);font-size:1.3rem}
+
+.steps{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:12px;counter-reset:s}
+.steps li{display:grid;grid-template-columns:34px 1fr;gap:12px;counter-increment:s}
+.steps li::before{content:counter(s);width:34px;height:34px;border-radius:50%;background:var(--blue-soft);color:var(--blue);font-family:var(--f-display);font-weight:800;display:grid;place-items:center}
+.steps li>div{min-width:0}
+
+.merke{background:var(--sheet);border:2px solid var(--ink);border-radius:4px;padding:16px 18px;position:relative;display:flex;flex-direction:column;gap:8px}
+.merke::before{content:"Merke";font-family:var(--f-hand);font-size:1.5rem;color:var(--red);position:absolute;top:-20px;left:12px;background:var(--sheet);padding:0 6px;line-height:1.2}
+mark{background:var(--marker);color:var(--marker-ink);padding:0 3px;border-radius:2px}
+
+.f{font-family:var(--f-display);font-weight:500;font-variant-numeric:tabular-nums;white-space:nowrap}
+.calc{font-family:var(--f-display);font-variant-numeric:tabular-nums;background:var(--paper);border-radius:8px;padding:10px 14px;overflow-x:auto;line-height:1.9}
+.fig{overflow-x:auto;display:flex;justify-content:center}
+.fig svg{max-width:100%;height:auto}
+.cap{font-size:.88rem;color:var(--ink-soft);text-align:center}
+
+.ex{border:1px dashed var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.ex .q{font-weight:700}
+.ex ol{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:8px}
+.ex li[hidden]{display:none}
+.ex .res{background:var(--green-soft);color:var(--green);font-weight:700;border-radius:8px;padding:8px 12px}
+.btn{border:0;background:var(--blue);color:var(--sheet);padding:10px 18px;border-radius:10px;font-weight:700;width:fit-content}
+.btn.ghost{background:transparent;color:var(--blue);border:1px solid var(--blue)}
+.btn.ok{background:var(--green)}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+
+.err{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.err>div{border-radius:10px;padding:10px 12px;min-width:0}
+.err .no{background:var(--red-soft)}
+.err .yes{background:var(--green-soft)}
+.err .no b{color:var(--red)} .err .yes b{color:var(--green)}
+.err .why{grid-column:1/-1;font-size:.95rem;color:var(--ink-soft);padding:0 2px 6px}
+.strike{text-decoration:line-through;text-decoration-color:var(--red);text-decoration-thickness:2px}
+
+.quiz{display:flex;flex-direction:column;gap:14px}
+.qq{border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.qq .qn{font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);font-weight:700}
+.qq input{font:inherit;font-family:var(--f-display);font-size:1.05rem;padding:8px 12px;border:2px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);width:9em;max-width:100%}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{text-align:left;border:2px solid var(--line);background:var(--sheet);border-radius:10px;padding:10px 14px}
+.opt.right{border-color:var(--green);background:var(--green-soft)}
+.opt.wrong{border-color:var(--red);background:var(--red-soft)}
+.fb{border-radius:10px;padding:10px 12px;font-size:.96rem}
+.fb.good{background:var(--green-soft);color:var(--green)}
+.fb.bad{background:var(--red-soft);color:var(--red)}
+.fb .sol{color:var(--ink);display:block;margin-top:6px}
+.score{font-family:var(--f-display);font-weight:700;font-variant-numeric:tabular-nums}
+
+.done{display:flex;flex-wrap:wrap;align-items:center;gap:14px;justify-content:space-between}
+
+table.t{border-collapse:collapse;width:100%;font-size:.95rem}
+table.t th,table.t td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+table.t th{background:var(--paper);font-family:var(--f-display);font-weight:700}
+.tbl{overflow-x:auto}
+
+/* SVG Farben aus Tokens */
+.sv{font-family:var(--f-body)}
+.sv text{fill:var(--ink);font-size:15px}
+.sv .lbl{font-family:var(--f-display);font-weight:700}
+.sv .hand{font-family:var(--f-hand);font-size:22px;fill:var(--blue)}
+.sv .grid{stroke:var(--line);stroke-width:1}
+.sv .axis{stroke:var(--ink);stroke-width:1.6;fill:none}
+.sv .tick{fill:var(--ink-soft);font-size:12px}
+.sv .ln1{stroke:var(--blue);stroke-width:3;fill:none}
+.sv .ln2{stroke:var(--red);stroke-width:3;fill:none}
+.sv .ln3{stroke:var(--green);stroke-width:3;fill:none}
+.sv .help{stroke:var(--green);stroke-width:2.5;fill:none;stroke-dasharray:6 5}
+.sv .dot{fill:var(--ink)}
+.sv .dotr{fill:var(--red)}
+.sv .shape{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.5}
+.sv .shape2{fill:var(--red-soft);stroke:var(--red);stroke-width:2.5}
+.sv .shape3{fill:var(--green-soft);stroke:var(--green);stroke-width:2.5}
+.sv .edge{stroke:var(--ink);stroke-width:2.5;fill:none}
+.sv .thin{stroke:var(--ink-soft);stroke-width:1.4;fill:none;stroke-dasharray:4 4}
+.sv .cell{fill:none;stroke:var(--blue);stroke-width:1;opacity:.5}
+.sv .box{fill:var(--paper);stroke:var(--line);stroke-width:1.5}
+
+@media (max-width:520px){
+  body{font-size:16px}
+  .sheet{padding:18px 16px}
+  .err{grid-template-columns:1fr}
+  h1{font-size:1.5rem}
+}
+@media (prefers-reduced-motion:no-preference){
+  .opt,.btn,.subj,.topic{transition:border-color .15s, background .15s}
+}
+</style>
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+
+<header class="bar"><div class="bar-in">
+  <a class="logo" href="#start" aria-label="Zur Startseite">
+    <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect x="3" y="2" width="20" height="22" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 2v22" stroke="currentColor" stroke-width="2"/><path d="M12 9h7M12 13h7M12 17h5" stroke="currentColor" stroke-width="1.6"/></svg>
+    Emres Lernheft
+  </a>
+  <span class="crumb" id="crumb"></span>
+  <button class="back" id="back" hidden>Zurück</button>
+</div></header>
+<main><div class="wrap" id="app"></div></main>
+
+<script>
+/* ---------- Hilfsfunktionen für Skizzen ---------- */
+let clipN=0;
+function koord(o){
+  const u=o.u||28,pad=24,W=(o.xmax-o.xmin)*u,H=(o.ymax-o.ymin)*u;
+  const X=x=>pad+(x-o.xmin)*u, Y=y=>pad+(o.ymax-y)*u;
+  let g='';
+  for(let x=o.xmin;x<=o.xmax;x++) g+=`<line class="grid" x1="${X(x)}" y1="${Y(o.ymin)}" x2="${X(x)}" y2="${Y(o.ymax)}"/>`;
+  for(let y=o.ymin;y<=o.ymax;y++) g+=`<line class="grid" x1="${X(o.xmin)}" y1="${Y(y)}" x2="${X(o.xmax)}" y2="${Y(y)}"/>`;
+  g+=`<path class="axis" d="M${X(o.xmin)} ${Y(0)}H${X(o.xmax)+10}M${X(o.xmax)+3} ${Y(0)-5}l7 5-7 5"/>`;
+  g+=`<path class="axis" d="M${X(0)} ${Y(o.ymin)}V${Y(o.ymax)-10}M${X(0)-5} ${Y(o.ymax)-3}l5-7 5 7"/>`;
+  g+=`<text class="tick" x="${X(o.xmax)+4}" y="${Y(0)+18}">x</text><text class="tick" x="${X(0)+8}" y="${Y(o.ymax)-4}">y</text>`;
+  for(let x=o.xmin;x<=o.xmax;x++) if(x!==0) g+=`<text class="tick" text-anchor="middle" x="${X(x)}" y="${Y(0)+15}">${x}</text>`;
+  for(let y=o.ymin;y<=o.ymax;y++) if(y!==0) g+=`<text class="tick" text-anchor="end" x="${X(0)-5}" y="${Y(y)+4}">${y}</text>`;
+  const id='c'+(++clipN);
+  let f='';
+  (o.fns||[]).forEach(fn=>{
+    let d='';const n=240;
+    for(let i=0;i<=n;i++){const x=o.xmin+(o.xmax-o.xmin)*i/n;d+=(i?'L':'M')+X(x).toFixed(1)+' '+Y(fn.f(x)).toFixed(1);}
+    f+=`<path class="${fn.cls}" d="${d}"/>`;
+  });
+  let ex=o.extra?o.extra(X,Y):'';
+  let p='';
+  (o.pts||[]).forEach(pt=>{p+=`<circle class="${pt.cls||'dot'}" cx="${X(pt.x)}" cy="${Y(pt.y)}" r="5"/>`+(pt.l?`<text class="lbl" x="${X(pt.x)+(pt.dx||8)}" y="${Y(pt.y)+(pt.dy||-8)}">${pt.l}</text>`:'');});
+  return `<svg class="sv" viewBox="0 0 ${W+pad*2} ${H+pad*2}" width="${W+pad*2}" role="img" aria-label="${o.alt||'Koordinatensystem'}">
+  <defs><clipPath id="${id}"><rect x="${pad}" y="${pad}" width="${W}" height="${H}"/></clipPath></defs>
+  ${g}<g clip-path="url(#${id})">${f}${ex}</g>${p}</svg>`;
+}
+
+const IMG={
+quadrat:()=>{let c='';for(let i=0;i<5;i++)for(let j=0;j<5;j++)c+=`<rect class="cell" x="${40+i*36}" y="${20+j*36}" width="36" height="36"/>`;
+ return `<svg class="sv" viewBox="0 0 420 230" width="420" role="img" aria-label="Quadrat mit 25 Kästchen, Seitenlänge 5">
+ <rect class="shape" x="40" y="20" width="180" height="180"/>${c}
+ <text class="lbl" x="130" y="222" text-anchor="middle">Seite = 5</text>
+ <text class="lbl" x="250" y="90">Fläche = 25 Kästchen</text>
+ <text class="hand" x="250" y="130">√25 = 5,</text>
+ <text class="hand" x="250" y="160">weil 5 · 5 = 25</text></svg>`;},
+mengen:()=>`<svg class="sv" viewBox="0 0 460 280" width="460" role="img" aria-label="Zahlenmengen ineinander: N in Z in Q in R">
+ <rect class="box" x="6" y="6" width="448" height="268" rx="22"/>
+ <rect class="shape3" x="26" y="40" width="300" height="220" rx="20" style="fill-opacity:.6"/>
+ <rect class="shape2" x="46" y="74" width="200" height="172" rx="18" style="fill-opacity:.6"/>
+ <rect class="shape" x="66" y="108" width="110" height="124" rx="16"/>
+ <text class="lbl" x="22" y="30">ℝ reelle Zahlen</text><text class="lbl" x="42" y="64">ℚ Brüche</text>
+ <text class="lbl" x="62" y="98">ℤ ganze</text><text class="lbl" x="80" y="132">ℕ</text>
+ <text x="80" y="160">1; 2; 3</text><text x="80" y="185">17</text>
+ <text x="186" y="160">−4</text><text x="190" y="190">0</text>
+ <text x="256" y="120">½</text><text x="256" y="160">0,75</text><text x="256" y="200">−2,3</text>
+ <text x="350" y="110">√2</text><text x="350" y="150">π</text><text x="350" y="190">√7</text>
+ <text class="hand" x="340" y="240">nicht als</text><text class="hand" x="340" y="262">Bruch schreibbar</text></svg>`,
+pyth:()=>`<svg class="sv" viewBox="0 0 430 470" width="400" role="img" aria-label="Rechtwinkliges Dreieck mit Quadraten auf allen Seiten, 9 plus 16 gleich 25">
+ <polygon class="shape2" points="0,170 120,170 120,290 0,290" style="fill-opacity:.8"/>
+ <polygon class="shape3" points="120,290 280,290 280,450 120,450" style="fill-opacity:.8"/>
+ <polygon class="shape" points="120,170 280,290 400,130 240,10"/>
+ <polygon class="edge" points="120,170 280,290 120,290" style="fill:var(--sheet)"/>
+ <path class="edge" d="M120 270h20v20" style="stroke-width:1.8"/>
+ <text class="lbl" x="128" y="262" style="fill:var(--red)">a = 3</text>
+ <text class="lbl" x="200" y="312" text-anchor="middle" style="fill:var(--green)">b = 4</text>
+ <text class="lbl" x="214" y="222" style="fill:var(--blue)">c = 5</text>
+ <text class="lbl" x="60" y="236" text-anchor="middle">a² = 9</text>
+ <text class="lbl" x="200" y="380" text-anchor="middle">b² = 16</text>
+ <text class="lbl" x="262" y="150" text-anchor="middle">c² = 25</text>
+ <text class="hand" x="300" y="380">9 + 16 = 25</text></svg>`,
+trig:()=>`<svg class="sv" viewBox="0 0 440 280" width="440" role="img" aria-label="Rechtwinkliges Dreieck mit Hypotenuse, Gegenkathete und Ankathete vom Winkel Alpha aus">
+ <polygon class="shape" points="40,230 320,230 320,50"/>
+ <path class="edge" d="M300 230v-20h20" style="stroke-width:1.8"/>
+ <path class="edge" d="M95 230a55 55 0 0 0 -8.5 -30" style="stroke:var(--red)"/>
+ <text class="lbl" x="104" y="218" style="fill:var(--red)">α</text>
+ <text class="lbl" x="180" y="256" text-anchor="middle">Ankathete (liegt am α)</text>
+ <text class="lbl" x="332" y="146">Gegen-</text><text class="lbl" x="332" y="166">kathete</text>
+ <text class="lbl" x="120" y="120" transform="rotate(-32.7 160 130)">Hypotenuse (längste Seite)</text>
+ <text class="hand" x="40" y="40">immer vom Winkel α aus schauen!</text></svg>`,
+streck:()=>`<svg class="sv" viewBox="0 0 400 250" width="400" role="img" aria-label="Zentrische Streckung eines Dreiecks mit Faktor 2">
+ <path class="thin" d="M30 220L170 160M30 220L250 200M30 220L190 60"/>
+ <polygon class="shape2" points="100,190 140,210 110,140"/>
+ <polygon class="shape" points="170,160 250,200 190,60" style="fill-opacity:.5"/>
+ <circle class="dot" cx="30" cy="220" r="5"/><text class="lbl" x="12" y="244">Z</text>
+ <text class="lbl" x="86" y="186">A</text><text class="lbl" x="140" y="232">B</text><text class="lbl" x="96" y="136">C</text>
+ <text class="lbl" x="152" y="156">A'</text><text class="lbl" x="254" y="214">B'</text><text class="lbl" x="196" y="56">C'</text>
+ <text class="hand" x="240" y="110">k = 2: jeder</text><text class="hand" x="240" y="134">Abstand von Z</text><text class="hand" x="240" y="158">wird doppelt so lang</text></svg>`,
+strahl:()=>`<svg class="sv" viewBox="0 0 500 290" width="500" role="img" aria-label="Strahlensatzfigur mit zwei parallelen Geraden">
+ <path class="edge" d="M30 250L470 40M30 250L480 250"/>
+ <path class="ln2" d="M250 145V250"/><path class="ln1" d="M360 92.5V250"/>
+ <circle class="dot" cx="30" cy="250" r="5"/>
+ <text class="lbl" x="14" y="276">Z</text>
+ <text class="lbl" x="236" y="138">A</text><text class="lbl" x="346" y="84">A'</text>
+ <text class="lbl" x="244" y="274">B</text><text class="lbl" x="354" y="274">B'</text>
+ <text x="118" y="182" transform="rotate(-25.5 130 190)">ZA = 4</text>
+ <text x="282" y="110" transform="rotate(-25.5 300 118)">AA' = 2</text>
+ <text x="258" y="206">AB = 3</text><text x="368" y="180">A'B' = ?</text>
+ <text class="hand" x="390" y="140">rot ∥ blau</text></svg>`,
+baum:()=>`<svg class="sv" viewBox="0 0 470 300" width="470" role="img" aria-label="Baumdiagramm: Urne mit 3 roten und 2 blauen Kugeln, zweimal ziehen ohne Zurücklegen">
+ <path class="edge" d="M30 150L160 70M30 150L160 230M180 70L320 30M180 70L320 110M180 230L320 190M180 230L320 270" style="stroke-width:1.8"/>
+ <path class="ln1" d="M30 150L160 70M180 70L320 30" style="stroke:var(--red);stroke-width:4"/>
+ <circle class="dot" cx="30" cy="150" r="5"/>
+ <circle cx="170" cy="70" r="12" style="fill:var(--red)"/><circle cx="170" cy="230" r="12" style="fill:var(--blue)"/>
+ <circle cx="332" cy="30" r="11" style="fill:var(--red)"/><circle cx="332" cy="110" r="11" style="fill:var(--blue)"/>
+ <circle cx="332" cy="190" r="11" style="fill:var(--red)"/><circle cx="332" cy="270" r="11" style="fill:var(--blue)"/>
+ <text class="lbl" x="70" y="98">3/5</text><text class="lbl" x="70" y="218">2/5</text>
+ <text class="lbl" x="232" y="40">2/4</text><text class="lbl" x="232" y="110">2/4</text>
+ <text class="lbl" x="232" y="198">3/4</text><text class="lbl" x="232" y="268">1/4</text>
+ <text x="352" y="35">rot, rot</text><text x="352" y="115">rot, blau</text><text x="352" y="195">blau, rot</text><text x="352" y="275">blau, blau</text>
+ <text class="hand" x="352" y="62">3/5 · 2/4 = 3/10</text></svg>`,
+ohm:()=>`<svg class="sv" viewBox="0 0 420 220" width="420" role="img" aria-label="Formeldreieck U geteilt durch R mal I">
+ <polygon class="shape" points="110,20 200,190 20,190"/>
+ <path class="edge" d="M52 125H168M110 125V190" style="stroke-width:2"/>
+ <text class="lbl" x="110" y="100" text-anchor="middle" style="font-size:28px">U</text>
+ <text class="lbl" x="68" y="172" text-anchor="middle" style="font-size:28px">R</text>
+ <text class="lbl" x="150" y="172" text-anchor="middle" style="font-size:28px">I</text>
+ <text class="hand" x="230" y="70">Finger auf das,</text><text class="hand" x="230" y="96">was du suchst:</text>
+ <text x="230" y="130">U = R · I</text><text x="230" y="156">R = U : I</text><text x="230" y="182">I = U : R</text></svg>`,
+tkonto:()=>`<svg class="sv" viewBox="0 0 440 200" width="440" role="img" aria-label="T-Konto mit Soll links und Haben rechts">
+ <path class="edge" d="M30 50H410M220 50V185"/>
+ <text class="lbl" x="220" y="36" text-anchor="middle">Konto 2800 Bank (BK)</text>
+ <text class="lbl" x="40" y="76">Soll</text><text class="lbl" x="400" y="76" text-anchor="end">Haben</text>
+ <text x="40" y="110">Zugänge (+)</text><text x="400" y="110" text-anchor="end">Abgänge (−)</text>
+ <text class="hand" x="40" y="160">Geld kommt rein</text><text class="hand" x="400" y="160" text-anchor="end">Geld geht raus</text></svg>`,
+erorterung:()=>`<svg class="sv" viewBox="0 0 440 330" width="440" role="img" aria-label="Aufbau einer Erörterung: Einleitung, drei Argumente steigernd, Schluss">
+ <rect class="shape3" x="20" y="10" width="400" height="50" rx="8"/><text class="lbl" x="220" y="41" text-anchor="middle">Einleitung: Hinführung + Frage</text>
+ <rect class="shape" x="20" y="76" width="400" height="190" rx="8" style="fill-opacity:.5"/>
+ <text class="lbl" x="36" y="100">Hauptteil</text>
+ <rect class="box" x="40" y="112" width="260" height="38" rx="6"/><text x="52" y="137">Argument 1 (schwächstes)</text>
+ <rect class="box" x="40" y="160" width="300" height="38" rx="6"/><text x="52" y="185">Argument 2</text>
+ <rect class="box" x="40" y="208" width="360" height="44" rx="6"/><text class="lbl" x="52" y="236">Argument 3 (stärkstes)</text>
+ <rect class="shape2" x="20" y="280" width="400" height="44" rx="8"/><text class="lbl" x="220" y="308" text-anchor="middle">Schluss: eigene Meinung + Ausblick</text></svg>`
+};
+
+const fr=(a,b)=>`<span class="fr"><span>${a}</span><span>${b}</span></span>`;
+const vec=(a,b)=>`<span class="vec"><span>${a}</span><span>${b}</span></span>`;
+/* ---------- Inhalte ---------- */
+const DATA={
+mathe:{name:'Mathe',c:'var(--s-mathe)',desc:'Lineare Funktionen (Probe-Thema), Wurzeln, Strahlensätze, Pythagoras, Gleichungssysteme',topics:[
+{id:'m-lin-grund',t:'Lineare Funktionen: y = mx + t',kurz:'Normalform lesen, Gerade zeichnen, Punktprobe',tag:'Probe-Thema',probe:1,
+intro:`<p>Eine lineare Funktion hat die Form <span class="f">y = m · x + t</span>. Das heißt <b>Normalform der Geradengleichung</b>. Ihr Graph ist immer eine <b>Gerade</b>.</p>
+<p><b>m</b> ist die <b>Steigung</b>: Wie steil ist die Gerade, und geht sie hoch oder runter?</p>
+<p><b>t</b> ist der <b>y-Achsenabschnitt</b>: An diesem Punkt schneidet die Gerade die y-Achse. Der Punkt heißt immer <b>(0 | t)</b>.</p>
+<p>In deinem Heft steht <b>𝔻 = ℚ</b>. Das heißt: Für x darfst du jede Zahl einsetzen, auch Brüche und negative Zahlen.</p>`,
+img:()=>koord({xmin:-4,xmax:5,ymin:-2,ymax:6,u:30,alt:'Gerade f: y = ½x + 3 mit Steigungsdreieck und y-Achsenabschnitt 3',fns:[{f:x=>x/2+3,cls:'ln1'},{f:x=>x/2,cls:'ln3'}],
+ extra:(X,Y)=>`<path class="help" d="M${X(0)} ${Y(3)}H${X(2)}V${Y(4)}" style="stroke:var(--red)"/><text class="lbl" x="${X(0.5)}" y="${Y(3)+20}" style="fill:var(--red)">2 rechts</text><text class="lbl" x="${X(2)+6}" y="${Y(3.5)+5}" style="fill:var(--red)">1 hoch</text><text class="lbl" x="${X(2.6)}" y="${Y(5)}" style="fill:var(--blue)">f: y = ½x + 3</text><text class="lbl" x="${X(2.6)}" y="${Y(0.6)}" style="fill:var(--green)">g: y = ½x</text>`,
+ pts:[{x:0,y:3,l:'(0|3)',dx:-50,dy:-6}]}),cap:'Blau: y = ½x + 3. Sie schneidet die y-Achse bei 3. Steigung ½ heißt 2 nach rechts, 1 nach oben.',
+steps:[
+[`m und t ablesen`,`<b>m</b> ist die Zahl direkt vor dem x. <b>t</b> ist die Zahl ohne x. Das Vorzeichen gehört immer dazu!
+<div class="tbl"><table class="t"><tr><th>Gleichung</th><th>m</th><th>t</th></tr>
+<tr><td>y = ½x + 3</td><td>½</td><td>3</td></tr><tr><td>y = −2x + 5</td><td>−2</td><td>5</td></tr>
+<tr><td>y = x − 4</td><td>1 (unsichtbare 1)</td><td>−4</td></tr><tr><td>y = −x</td><td>−1</td><td>0</td></tr>
+<tr><td>y = 3 − 5x</td><td>−5 (steht hinten!)</td><td>3</td></tr><tr><td>y = 2</td><td>0 (waagrecht)</td><td>2</td></tr></table></div>`],
+[`Ersten Punkt setzen: (0 | t)`,`Geh auf die y-Achse zur Zahl t und mach ein Kreuz. Bei y = ½x + 3 ist das bei 3.`],
+[`Steigung als Bruch schreiben`,`m = ${fr('hoch / runter','rechts')}. Eine ganze Zahl bekommt einfach eine 1 drunter: m = 3 = ${fr('3','1')}.
+<div class="calc">m = ½ → 2 nach rechts, 1 nach oben<br>m = −⅓ → 3 nach rechts, 1 nach unten<br>m = 3 → 1 nach rechts, 3 nach oben</div>`],
+[`Steigungsdreieck zeichnen`,`Vom ersten Punkt aus: erst nach <b>rechts</b> (Nenner), dann <b>hoch</b> (bei +) oder <b>runter</b> (bei −). Dort zweites Kreuz.`],
+[`Gerade durchziehen`,`Lineal an beide Kreuze, Linie über das ganze Koordinatensystem ziehen. Gerade benennen (g, f, h).`],
+[`Punktprobe: Liegt ein Punkt auf der Geraden?`,`x-Wert vom Punkt einsetzen und ausrechnen. Kommt der y-Wert vom Punkt raus? Dann liegt er drauf.
+<div class="calc">P(4 | 5) und y = ½x + 3: &nbsp; ½ · 4 + 3 = 2 + 3 = 5 ✓ liegt drauf<br>Q(2 | 5): &nbsp; ½ · 2 + 3 = 4 ≠ 5 ✗ liegt nicht drauf</div>`],
+[`Steigt oder fällt sie?`,`m positiv: Gerade geht von links nach rechts <b>hoch</b>. m negativ: Sie geht <b>runter</b>. m = 0: waagrecht. Je größer die Zahl (ohne Vorzeichen), desto steiler.`]],
+merke:`<p><b>y = m · x + t</b> (Normalform)</p><p>m = Steigung &nbsp;&nbsp; t = y-Achsenabschnitt, Punkt (0 | t)</p><p><mark>Das Vorzeichen gehört zur Zahl: y = 3 − 5x → m = −5, t = 3.</mark></p><p>Steigung immer als Bruch: ${fr('hoch','rechts')}</p>`,
+bsp:[{q:`Zeichne die Gerade g: y = −⅔x + 2.`,s:[`t = 2 ablesen. Erstes Kreuz auf der y-Achse bei (0 | 2).`,`m = −⅔. Der Nenner 3 heißt: 3 nach rechts. Der Zähler 2 mit Minus heißt: 2 nach unten.`,`Von (0 | 2) aus 3 nach rechts und 2 nach unten. Du landest bei (3 | 0).`,`Kontrolle mit Rechnung: −⅔ · 3 + 2 = −2 + 2 = 0. Passt.`,`Lineal an (0 | 2) und (3 | 0), durchziehen. Die Gerade fällt, weil m negativ ist.`],r:`Gerade durch (0 | 2) und (3 | 0), fallend.`},
+{q:`Liegt der Punkt P(−6 | 0) auf f: y = ½x + 3?`,s:[`x = −6 einsetzen: y = ½ · (−6) + 3.`,`½ · (−6) = −3. Negative Zahlen beim Einsetzen immer in Klammern.`,`−3 + 3 = 0. Das ist genau der y-Wert von P.`],r:`Ja, P liegt auf f. (Es ist sogar die Nullstelle, also der Schnittpunkt mit der x-Achse.)`},
+{q:`Ein Handytarif kostet 8 € Grundgebühr im Monat und 0,05 € pro Minute. Stell die Gleichung auf. Was kosten 200 Minuten?`,s:[`Was immer gleich bleibt, ist t: t = 8.`,`Was pro Minute dazukommt, ist m: m = 0,05.`,`Gleichung: y = 0,05x + 8. Dabei ist x = Minuten und y = Kosten in €.`,`x = 200 einsetzen: y = 0,05 · 200 + 8 = 10 + 8.`],r:`y = 0,05x + 8. 200 Minuten kosten 18 €.`}],
+fehler:[[`y = 3 − 5x: m = 3, t = −5`,`m = −5, t = 3`,`m ist immer die Zahl beim x, egal ob vorne oder hinten.`],
+[`m = ½: 1 nach rechts, 2 nach oben`,`2 nach rechts, 1 nach oben`,`Unten (Nenner) = rechts, oben (Zähler) = hoch. Wie ein Stockwerk: Erst laufen, dann Treppe.`],
+[`y = −x + 4: m = 1`,`m = −1`,`Vor dem x steht eine unsichtbare 1, aber das Minus bleibt.`],
+[`½ · −6 + 3 ohne Klammern rechnen`,`½ · (−6) + 3`,`Negative Zahlen beim Einsetzen immer einklammern, sonst passieren Vorzeichenfehler.`]],
+quiz:[{l:1,q:`y = 4x − 7. Wie groß ist t?`,a:-7},{l:1,q:`y = −x + 2. Wie groß ist m?`,a:-1,h:`Vor dem x steht eine unsichtbare 1.`},{l:1,q:`y = 3 − 5x. Wie groß ist m?`,a:-5,h:`Die Zahl beim x, mit Vorzeichen.`},
+{l:2,q:`m = ¾. Wie zeichnest du das Steigungsdreieck?`,o:[`3 rechts, 4 hoch`,`4 rechts, 3 hoch`,`4 rechts, 3 runter`,`3 rechts, 4 runter`],a:1,h:`Nenner = rechts, Zähler = hoch.`},
+{l:2,q:`Liegt P(2 | 1) auf y = −2x + 5?`,o:[`Ja`,`Nein`],a:0,h:`−2 · 2 + 5 = ?`},
+{l:2,q:`y = ½x + 3. Wie groß ist y bei x = 6?`,a:6},
+{l:3,q:`Für welches t liegt P(4 | 1) auf y = ½x + t?`,a:-1,h:`1 = ½ · 4 + t, also 1 = 2 + t`},
+{l:3,q:`Wo schneidet y = −⅓x + 2 die x-Achse? x = ?`,a:6,h:`y = 0 setzen: 0 = −⅓x + 2`}]},
+
+{id:'m-lin-steigung',t:'Steigung berechnen: 3 Wege',kurz:'Steigungsdreieck, Vektor und Formel',tag:'Probe-Thema',probe:1,
+intro:`<p>Du hast zwei Punkte A und B und willst die Steigung m. Dafür gibt es <b>drei Wege</b>. Alle drei liefern dasselbe Ergebnis. Nimm den, den du am besten verstehst, und prüf mit einem zweiten.</p>
+<p>Beispiel aus deinem Heft: <b>A(8 | 4)</b> und <b>B(4 | 2)</b>.</p>`,
+img:()=>koord({xmin:-1,xmax:9,ymin:-1,ymax:5,u:32,alt:'Gerade durch B(4|2) und A(8|4) mit Steigungsdreieck 4 nach rechts und 2 nach oben',fns:[{f:x=>x/2,cls:'ln1'}],
+ extra:(X,Y)=>`<path class="help" d="M${X(4)} ${Y(2)}H${X(8)}V${Y(4)}" style="stroke:var(--red)"/><text class="lbl" x="${X(6)}" y="${Y(2)+20}" text-anchor="middle" style="fill:var(--red)">4 rechts</text><text class="lbl" x="${X(8)+6}" y="${Y(3)+5}" style="fill:var(--red)">2 hoch</text>`,
+ pts:[{x:4,y:2,l:'B(4|2)',dx:-30,dy:-12},{x:8,y:4,l:'A(8|4)',dx:-60,dy:-10}]}),cap:'Von B nach A: 4 nach rechts, 2 nach oben. m = 2/4 = ½.',
+steps:[
+[`Weg 1: Steigungsdreieck (Kästchen zählen)`,`Zeichne beide Punkte ein. Geh vom linken Punkt waagrecht nach rechts, bis du unter (oder über) dem anderen Punkt bist. Zähl die Kästchen: <b>4</b>. Dann senkrecht bis zum Punkt: <b>2 hoch</b>.
+<div class="calc">m = ${fr('hoch','rechts')} = ${fr('2','4')} = ½</div>Musst du nach unten, ist m negativ.`],
+[`Weg 2: Vektor (wie im Heft)`,`Der Vektor von B nach A heißt ${'<span class="f">BA→</span>'}. Rechnung: <b>Spitze minus Fuß</b>, also A minus B.
+<div class="calc">BA→ = ${vec('8 − 4','4 − 2')} = ${vec('4','2')}</div>Oben steht, wie weit nach rechts, unten, wie weit nach oben. Jetzt „umdrehen und als Bruch schreiben“: <b>untere Zahl durch obere Zahl</b>.
+<div class="calc">m = ${fr('2','4')} = ½</div>`],
+[`Weg 3: Formel`,`Ohne Zeichnung, nur rechnen:<div class="calc">m = ${fr('y<sub>A</sub> − y<sub>B</sub>','x<sub>A</sub> − x<sub>B</sub>')} = ${fr('4 − 2','8 − 4')} = ${fr('2','4')} = ½</div>Oben die y-Werte, unten die x-Werte. Oben und unten in <b>derselben Reihenfolge</b> (A zuerst, dann B).`],
+[`Negative Zahlen: Klammern!`,`Bei A(4 | 5) und B(−4 | 3):<div class="calc">x<sub>A</sub> − x<sub>B</sub> = 4 − (−4) = 4 + 4 = 8</div>Minus minus wird plus.`],
+[`Kürzen`,`${fr('2','8')} = ¼, ${fr('6','4')} = ${fr('3','2')}, ${fr('−4','−2')} = 2. Minus durch Minus ist plus.`],
+[`Kontrolle mit Blick`,`Geht die Gerade von links nach rechts hoch? Dann muss m positiv sein. Geht sie runter? Dann negativ. Passt das nicht, hast du ein Vorzeichen verdreht.`]],
+merke:`<p><b>m = ${fr('y<sub>A</sub> − y<sub>B</sub>','x<sub>A</sub> − x<sub>B</sub>')}</b> &nbsp; = ${fr('hoch','rechts')}</p><p>Vektor ${vec('rechts','hoch')} → m = ${fr('untere Zahl','obere Zahl')}</p><p><mark>y oben, x unten. Oben und unten dieselbe Reihenfolge.</mark></p>`,
+bsp:[{q:`Aus deinem Heft: A(4 | 5), B(−4 | 3). Berechne m.`,s:[`Formel hinschreiben: m = (y<sub>A</sub> − y<sub>B</sub>) : (x<sub>A</sub> − x<sub>B</sub>).`,`Oben: 5 − 3 = 2.`,`Unten: 4 − (−4) = 4 + 4 = 8.`,`m = ${fr('2','8')}. Kürzen durch 2.`],r:`m = ¼`},
+{q:`A(1 | 6), B(3 | 2). Berechne m mit Vektor und mit Formel.`,s:[`Vektor: BA→ = ${vec('1 − 3','6 − 2')} = ${vec('−2','4')}.`,`Umdrehen: m = ${fr('4','−2')} = −2.`,`Formel zur Kontrolle: m = ${fr('6 − 2','1 − 3')} = ${fr('4','−2')} = −2.`,`Beide Wege gleich. Die Gerade fällt (m negativ). Das passt: B liegt weiter rechts und weiter unten als A.`],r:`m = −2`},
+{q:`A(−2 | −1), B(4 | 2). Berechne m.`,s:[`Oben: y<sub>A</sub> − y<sub>B</sub> = −1 − 2 = −3.`,`Unten: x<sub>A</sub> − x<sub>B</sub> = −2 − 4 = −6.`,`m = ${fr('−3','−6')}. Minus durch Minus = plus.`],r:`m = ½`}],
+fehler:[[`m = ${fr('y<sub>A</sub> − y<sub>B</sub>','x<sub>B</sub> − x<sub>A</sub>')}`,`m = ${fr('y<sub>A</sub> − y<sub>B</sub>','x<sub>A</sub> − x<sub>B</sub>')}`,`Oben A − B, dann unten auch A − B. Sonst stimmt das Vorzeichen nicht.`],
+[`Vektor ${vec('4','2')} → m = ${fr('4','2')} = 2`,`m = ${fr('2','4')} = ½`,`Die obere Zahl ist „rechts“, die gehört nach unten in den Bruch. Deshalb „umdrehen“.`],
+[`4 − (−4) = 0`,`4 − (−4) = 8`,`Minus minus wird plus.`],
+[`m = ${fr('x','y')}`,`m = ${fr('y','x')}`,`Merksatz: „Hoch durch rechts“, so wie ein Bruch aus Etage und Weg.`]],
+quiz:[{l:1,q:`Steigungsdreieck: 3 nach rechts, 6 nach oben. m = ?`,a:2},
+{l:1,q:`Vektor mit 2 oben (rechts) und 5 unten (hoch). m = ?`,a:2.5,s:'5/2 = 2,5',h:`Untere Zahl durch obere Zahl.`},
+{l:1,q:`Steigungsdreieck: 5 nach rechts, 2 nach unten. m = ?`,a:-0.4,s:'−2/5 = −0,4',h:`Nach unten heißt minus. −2 : 5`},
+{l:2,q:`A(5 | 7), B(1 | 3). m = ?`,a:1},
+{l:2,q:`A(2 | 1), B(4 | 5). m = ?`,a:2,h:`(1 − 5) : (2 − 4)`},
+{l:2,q:`A(0 | 4), B(2 | 0). m = ?`,a:-2,h:`(4 − 0) : (0 − 2)`},
+{l:3,q:`A(−2 | −1), B(4 | 2). m = ? (Bruch oder Dezimalzahl)`,a:0.5,s:'1/2',h:`(−1 − 2) : (−2 − 4)`},
+{l:3,q:`A(−3 | 5), B(3 | 1). Welche Steigung stimmt?`,o:[`−⅔`,`⅔`,`−³⁄₂`,`³⁄₂`],a:0,h:`(5 − 1) : (−3 − 3) = 4 : (−6)`}]},
+
+{id:'m-lin-zweipunkte',t:'Geradengleichung aus zwei Punkten',kurz:'m berechnen, Punkt einsetzen, t ausrechnen',tag:'Probe-Thema',probe:1,
+intro:`<p>Das ist die wichtigste Aufgabe zum Thema und kommt in fast jeder Probe. Du bekommst zwei Punkte und sollst die Gleichung y = mx + t finden.</p><p>Es sind immer <b>die gleichen 3 Schritte</b>, wie in deinem Heft. Plus eine Probe am Ende.</p>`,
+img:()=>koord({xmin:-5,xmax:5,ymin:-1,ymax:6,u:30,alt:'Gerade y = ¼x + 4 durch A(4|5) und B(−4|3)',fns:[{f:x=>x/4+4,cls:'ln1'}],
+ pts:[{x:4,y:5,l:'A(4|5)',dx:-30,dy:-12},{x:-4,y:3,l:'B(−4|3)',dx:-24,dy:-12},{x:0,y:4,cls:'dotr',l:'t = 4',dx:8,dy:22}]}),cap:'Die Gerade durch A und B schneidet die y-Achse bei 4.',
+steps:[
+[`Schritt 1: Steigung m berechnen`,`Mit der Formel (oder dem Vektor):<div class="calc">m = ${fr('y<sub>A</sub> − y<sub>B</sub>','x<sub>A</sub> − x<sub>B</sub>')}</div>`],
+[`Schritt 2: m und einen Punkt einsetzen`,`Schreib <b>y = mx + t</b> hin. Setz für m deine Steigung ein. Für x und y nimmst du die Koordinaten von <b>einem</b> Punkt (A oder B, egal). Tipp: Nimm den Punkt mit den einfacheren Zahlen.`],
+[`Schritt 3: Nach t auflösen`,`Jetzt ist nur noch t unbekannt. Rechne die Seite mit m und x aus, dann bringst du die Zahl auf die andere Seite. Was du links machst, machst du auch rechts.`],
+[`Schritt 4: Gleichung aufschreiben`,`m und t in y = mx + t einsetzen. x und y bleiben jetzt als Buchstaben stehen!`],
+[`Schritt 5: Probe mit dem anderen Punkt`,`Setz den Punkt ein, den du in Schritt 2 <b>nicht</b> genommen hast. Kommt sein y-Wert raus, ist alles richtig.`]],
+merke:`<p><b>1.</b> m berechnen &nbsp; <b>2.</b> m und Punkt in y = mx + t einsetzen &nbsp; <b>3.</b> t ausrechnen &nbsp; <b>4.</b> Gleichung hinschreiben &nbsp; <b>5.</b> Probe</p><p><mark>Liegt ein Punkt auf der y-Achse, z. B. (0 | 3), dann ist t sofort 3.</mark></p>`,
+bsp:[{q:`Aus deinem Heft: A(4 | 5), B(−4 | 3). Bestimme die Geradengleichung.`,s:[`Schritt 1: m = ${fr('5 − 3','4 − (−4)')} = ${fr('2','8')} = ¼.`,`Schritt 2: A(4 | 5) einsetzen: 5 = ¼ · 4 + t.`,`¼ · 4 = 1. Also: 5 = 1 + t.`,`Schritt 3: Auf beiden Seiten − 1: 4 = t.`,`Schritt 4: y = ¼x + 4.`,`Schritt 5, Probe mit B(−4 | 3): ¼ · (−4) + 4 = −1 + 4 = 3 ✓`],r:`g: y = ¼x + 4`},
+{q:`A(2 | 1), B(6 | −7). Bestimme die Geradengleichung.`,s:[`m = ${fr('1 − (−7)','2 − 6')} = ${fr('8','−4')} = −2.`,`A einsetzen: 1 = −2 · 2 + t, also 1 = −4 + t.`,`Auf beiden Seiten + 4: t = 5.`,`Gleichung: y = −2x + 5.`,`Probe mit B: −2 · 6 + 5 = −12 + 5 = −7 ✓`],r:`g: y = −2x + 5`},
+{q:`A(3 | 2), B(−3 | −2). Bestimme die Geradengleichung.`,s:[`m = ${fr('2 − (−2)','3 − (−3)')} = ${fr('4','6')} = ⅔.`,`A einsetzen: 2 = ⅔ · 3 + t.`,`⅔ · 3 = 2. Also 2 = 2 + t, damit t = 0.`,`Gleichung: y = ⅔x. Bei t = 0 geht die Gerade durch den Ursprung (0 | 0).`,`Probe mit B: ⅔ · (−3) = −2 ✓`],r:`g: y = ⅔x`}],
+fehler:[[`5 − 1 + t &nbsp;| − 1`,`5 = 1 + t &nbsp;| − 1`,`Das Gleichheitszeichen nie weglassen. So steht es auch in deinem Heft, da fehlt es. Ohne „=“ ist es keine Gleichung mehr.`],
+[`Am Ende: 4 = ¼x + 4`,`y = ¼x + 4`,`In die fertige Gleichung kommen nur m und t. x und y bleiben Buchstaben.`],
+[`−2 · (−3) = −6`,`−2 · (−3) = +6`,`Minus mal Minus ist Plus.`],
+[`Probe weglassen`,`Immer mit dem zweiten Punkt prüfen`,`Die Probe dauert 20 Sekunden und zeigt dir sofort, ob du Punkte holst.`]],
+quiz:[{l:1,q:`A(0 | 3), B(2 | 7). Wie groß ist t?`,a:3,h:`A liegt auf der y-Achse (x = 0).`},
+{l:1,q:`A(0 | 3), B(2 | 7). Wie groß ist m?`,a:2},
+{l:2,q:`A(1 | 4), B(3 | 8). Wie groß ist t?`,a:2,h:`m = 2. Dann 4 = 2 · 1 + t`},
+{l:2,q:`A(2 | 5), B(4 | 9). Welche Gleichung stimmt?`,o:[`y = 2x + 1`,`y = 2x + 5`,`y = 4x − 3`,`y = ½x + 4`],a:0},
+{l:3,q:`A(−2 | 5), B(2 | −3). Wie groß ist m?`,a:-2},{l:3,q:`A(−2 | 5), B(2 | −3). Wie groß ist t?`,a:1,h:`5 = −2 · (−2) + t`},
+{l:3,q:`A(4 | 1), B(−4 | 5). Welche Gleichung stimmt?`,o:[`y = ½x − 1`,`y = −½x + 3`,`y = −2x + 9`,`y = −½x + 1`],a:1,h:`m = (1 − 5) : (4 + 4) = −½`}]},
+
+{id:'m-lin-parallel',t:'Parallele und senkrechte Geraden',kurz:'Gleiche Steigung, Kehrwert mit Minus',tag:'Probe-Thema',probe:1,
+intro:`<p><b>Parallel</b> heißt: Die Geraden laufen nebeneinander her und treffen sich nie. Sie haben die <mark>gleiche Steigung</mark>.</p>
+<p><b>Senkrecht</b> (Zeichen ⊥) heißt: Sie kreuzen sich im rechten Winkel (90°).</p>
+<div class="warn"><b>Achtung, Heft prüfen!</b> In deinem Heft steht m₂ = ${fr('1','m₁')}. <b>Da fehlt das Minus.</b> Richtig ist:<div class="calc">m₂ = −${fr('1','m₁')} &nbsp;&nbsp; bzw. &nbsp;&nbsp; m₁ · m₂ = −1</div>Der zweite Teil im Heft (m₁ · m₂ = −1) und der Satz „anderes Vorzeichen und Bruch umdrehen“ sind richtig. Ergänz das Minus in der Formel.</div>`,
+img:()=>koord({xmin:-4,xmax:4,ymin:-3,ymax:3,u:34,alt:'Senkrechte Geraden y = −⅓x + 1 und y = 3x − 1',fns:[{f:x=>-x/3+1,cls:'ln1'},{f:x=>3*x-1,cls:'ln2'}],
+ extra:(X,Y)=>{const p=[0.6,0.8],a=[3/Math.sqrt(10)*0.35,-1/Math.sqrt(10)*0.35],b=[1/Math.sqrt(10)*0.35,3/Math.sqrt(10)*0.35];
+ return `<path class="edge" style="stroke-width:1.6" d="M${X(p[0]+a[0])} ${Y(p[1]+a[1])}L${X(p[0]+a[0]+b[0])} ${Y(p[1]+a[1]+b[1])}L${X(p[0]+b[0])} ${Y(p[1]+b[1])}"/><text class="lbl" x="${X(-3.9)}" y="${Y(2.4)}" style="fill:var(--blue)">g₁: y = −⅓x + 1</text><text class="lbl" x="${X(1.25)}" y="${Y(2.6)}" style="fill:var(--red)">g₂: y = 3x − 1</text>`}}),
+cap:'Beispiel aus deinem Heft: 3 · (−⅓) = −1, also stehen die Geraden senkrecht aufeinander.',
+steps:[
+[`Parallel prüfen`,`Vergleiche nur m. Gleiches m, verschiedenes t → parallel.<div class="calc">g: y = ½x + 1 und h: y = ½x − 3 → beide m = ½ → g ∥ h</div>`],
+[`Senkrechte Steigung bilden`,`Zwei Dinge gleichzeitig: <b>Bruch umdrehen</b> und <b>Vorzeichen wechseln</b>.
+<div class="tbl"><table class="t"><tr><th>m₁</th><th>umdrehen</th><th>Vorzeichen wechseln = m₂</th></tr>
+<tr><td>3 = ${fr('3','1')}</td><td>${fr('1','3')}</td><td>−⅓</td></tr><tr><td>−⅓</td><td>−3</td><td>3</td></tr>
+<tr><td>⅔</td><td>${fr('3','2')}</td><td>−${fr('3','2')}</td></tr><tr><td>−4</td><td>−¼</td><td>¼</td></tr><tr><td>½</td><td>2</td><td>−2</td></tr></table></div>`],
+[`Kontrolle: m₁ · m₂ = −1`,`Multiplizier die beiden Steigungen. Kommt −1 raus, stehen sie senkrecht. Kommt was anderes raus, nicht.<div class="calc">3 · (−⅓) = −1 ✓ &nbsp;&nbsp; 2 · (−2) = −4 ✗</div>`],
+[`Parallele durch einen Punkt P`,`m von der gegebenen Geraden übernehmen. Dann P einsetzen und t ausrechnen, wie bei „Gerade aus zwei Punkten“, Schritt 2 und 3.`],
+[`Senkrechte durch einen Punkt P`,`Erst m₂ = −1 : m₁ bilden. Dann P einsetzen und t ausrechnen.`]],
+merke:`<p><b>Parallel:</b> m₁ = m₂</p><p><b>Senkrecht:</b> m₂ = −${fr('1','m₁')} &nbsp; bzw. &nbsp; m₁ · m₂ = −1</p><p><mark>Umdrehen UND Vorzeichen wechseln. Beides!</mark></p>`,
+bsp:[{q:`Bestimme die Parallele zu g: y = 2x − 1 durch P(3 | 4).`,s:[`Parallel → gleiche Steigung: m = 2.`,`P einsetzen: 4 = 2 · 3 + t, also 4 = 6 + t.`,`− 6 auf beiden Seiten: t = −2.`],r:`h: y = 2x − 2`},
+{q:`Bestimme die Senkrechte zu g: y = ½x + 3 durch P(2 | 1).`,s:[`m₁ = ½. Umdrehen: 2. Vorzeichen wechseln: m₂ = −2.`,`Kontrolle: ½ · (−2) = −1 ✓`,`P einsetzen: 1 = −2 · 2 + t, also 1 = −4 + t.`,`+ 4 auf beiden Seiten: t = 5.`],r:`h: y = −2x + 5`},
+{q:`Stehen g: y = ¾x + 1 und h: y = −${fr('4','3')}x − 2 senkrecht aufeinander?`,s:[`Steigungen malnehmen: ¾ · (−${fr('4','3')}).`,`Zähler mal Zähler, Nenner mal Nenner: −${fr('12','12')} = −1.`],r:`Ja, m₁ · m₂ = −1. Sie stehen senkrecht.`}],
+fehler:[[`m₂ = ${fr('1','m₁')} (so steht es im Heft)`,`m₂ = −${fr('1','m₁')}`,`Ohne Minus sind die Geraden nicht senkrecht. Beispiel: 2 und ½ ergeben 2 · ½ = 1, nicht −1.`],
+[`m₁ = 3 → m₂ = −3`,`m₂ = −⅓`,`Nur das Vorzeichen wechseln reicht nicht. Auch umdrehen.`],
+[`m₁ = 3 → m₂ = ⅓`,`m₂ = −⅓`,`Nur umdrehen reicht auch nicht. Auch das Vorzeichen wechseln.`],
+[`Parallel, weil gleiches t`,`Parallel nur bei gleichem m`,`Gleiches t heißt nur: Sie schneiden sich auf der y-Achse.`]],
+quiz:[{l:1,q:`Welche Gerade ist parallel zu y = 4x + 1?`,o:[`y = −4x + 1`,`y = 4x − 6`,`y = ¼x + 1`,`y = x + 4`],a:1},
+{l:1,q:`m₁ = 2. Welche Steigung hat die Senkrechte?`,o:[`−½`,`½`,`−2`,`2`],a:0},
+{l:2,q:`m₁ = −⅓. m₂ der Senkrechten = ?`,a:3},
+{l:2,q:`m₁ = ⅖. m₂ der Senkrechten = ? (Bruch oder Dezimalzahl)`,a:-2.5,s:'−5/2 = −2,5',h:`Umdrehen: 5/2. Vorzeichen wechseln.`},
+{l:2,q:`Stehen y = 2x + 1 und y = −2x + 3 senkrecht?`,o:[`Ja`,`Nein`],a:1,h:`2 · (−2) = ?`},
+{l:3,q:`Parallele zu y = −3x + 2 durch P(1 | 4). t = ?`,a:7,h:`4 = −3 · 1 + t`},
+{l:3,q:`Senkrechte zu y = 2x durch P(4 | 0). t = ?`,a:2,h:`m₂ = −½. Dann 0 = −½ · 4 + t`},
+{l:3,q:`Stehen y = −⅔x + 1 und y = 1,5x − 2 senkrecht?`,o:[`Ja`,`Nein`],a:0,h:`1,5 = ³⁄₂. Dann −⅔ · ³⁄₂ = ?`}]},
+
+{id:'m-lin-verschiebung',t:'Geraden verschieben mit Vektor',kurz:'Punkt abbilden, Steigung bleibt gleich',tag:'Probe-Thema',probe:1,
+intro:`<p>Ein Vektor ${vec('v<sub>x</sub>','v<sub>y</sub>')} ist eine Verschiebe-Anweisung. <b>Oben</b>: so viel nach rechts (negativ = links). <b>Unten</b>: so viel nach oben (negativ = unten).</p>
+<p>Wird eine Gerade verschoben, <mark>bleibt die Steigung gleich</mark>. Die Gerade wird nur woanders hingelegt. Es genügt also, <b>einen Punkt</b> zu verschieben, am besten den Schnittpunkt mit der y-Achse.</p>`,
+img:()=>koord({xmin:-3,xmax:4,ymin:-2,ymax:5,u:34,alt:'Gerade g: y = ½x wird um den Vektor (0|3) zu f: y = ½x + 3 verschoben',fns:[{f:x=>x/2,cls:'ln3'},{f:x=>x/2+3,cls:'ln1'}],
+ extra:(X,Y)=>{const ar=(x1,y1,x2,y2)=>`<path d="M${X(x1)} ${Y(y1)}L${X(x2)} ${Y(y2)+8}" style="stroke:var(--red);stroke-width:2.5;fill:none"/><path d="M${X(x2)-6} ${Y(y2)+10}L${X(x2)} ${Y(y2)}L${X(x2)+6} ${Y(y2)+10}Z" style="fill:var(--red)"/>`;
+ return ar(0,0,0,3)+ar(2,1,2,4)+`<text class="lbl" x="${X(0.15)}" y="${Y(1.6)}" style="fill:var(--red)">v→</text><text class="lbl" x="${X(2.3)}" y="${Y(4.6)}" style="fill:var(--blue)">f: y = ½x + 3</text><text class="lbl" x="${X(2.2)}" y="${Y(0.4)}" style="fill:var(--green)">g: y = ½x</text>`}}),
+cap:'Beispiel aus deinem Heft: g wird um 3 nach oben verschoben. Jeder Punkt wandert gleich weit.',
+steps:[
+[`Vektor lesen`,`${vec('2','−1')} heißt: 2 nach rechts, 1 nach unten. ${vec('0','3')} heißt: 0 nach rechts, 3 nach oben.`],
+[`Einen Punkt verschieben`,`Die Zahlen vom Vektor zum Punkt dazuzählen:<div class="calc">P(x | y) → P'(x + v<sub>x</sub> | y + v<sub>y</sub>)<br>P(1 | 2) mit ${vec('3','4')} → P'(4 | 6)</div>`],
+[`Bei Geraden: m bleibt gleich`,`Die verschobene Gerade hat dieselbe Steigung. Du musst nur noch das neue t finden.`],
+[`Den Punkt (0 | t) verschieben`,`Nimm den y-Achsenabschnitt der alten Geraden als Punkt und verschieb ihn mit dem Vektor. Das ist ein Punkt auf der neuen Geraden.`],
+[`Neues t ausrechnen`,`Den verschobenen Punkt und das alte m in y = mx + t einsetzen, nach t auflösen. Wie bei „Gerade aus zwei Punkten“.`],
+[`Abkürzung, wenn oben 0 steht`,`Ist der Vektor ${vec('0','a')}, geht es nur hoch oder runter. Dann ist das neue t einfach t + a.`]],
+merke:`<p><b>Verschiebung mit ${vec('v<sub>x</sub>','v<sub>y</sub>')}:</b> P(x | y) → P'(x + v<sub>x</sub> | y + v<sub>y</sub>)</p><p><mark>Bei Geraden bleibt m gleich. Nur t ändert sich.</mark></p><p>Vektor ${vec('0','a')}: neues t = altes t + a</p>`,
+bsp:[{q:`Aus deinem Heft: g: y = ½x wird mit v→ = ${vec('0','3')} verschoben. Wie heißt die neue Gerade f?`,s:[`m bleibt gleich: m = ½.`,`Oben steht 0, also nur nach oben verschoben. Altes t = 0, neues t = 0 + 3 = 3.`],r:`f: y = ½x + 3`},
+{q:`g: y = 2x + 1 wird mit v→ = ${vec('2','−1')} verschoben. Wie heißt die neue Gerade?`,s:[`m bleibt: m = 2.`,`Punkt (0 | 1) von g verschieben: (0 + 2 | 1 − 1) = (2 | 0).`,`(2 | 0) in y = 2x + t einsetzen: 0 = 2 · 2 + t, also 0 = 4 + t.`,`t = −4.`,`Probe mit einem anderen Punkt von g: (1 | 3) → (3 | 2). 2 · 3 − 4 = 2 ✓`],r:`y = 2x − 4`},
+{q:`Fangfrage: g: y = ½x wird mit v→ = ${vec('2','1')} verschoben. Was passiert?`,s:[`m bleibt ½.`,`Punkt (0 | 0) verschieben: (2 | 1).`,`Einsetzen: 1 = ½ · 2 + t, also 1 = 1 + t, t = 0.`,`Die neue Gerade ist y = ½x, also dieselbe wie vorher! Der Vektor zeigt genau in Richtung der Geraden (2 rechts, 1 hoch = Steigung ½). Die Gerade rutscht nur in sich selbst.`],r:`y = ½x (unverändert)`}],
+fehler:[[`Bei Verschiebung ändert sich m`,`m bleibt immer gleich`,`Verschieben heißt nicht drehen.`],
+[`${vec('3','0')}: neues t = t + 3`,`Punkt verschieben und neu einsetzen`,`Die obere Zahl ist nach rechts. Das ändert t nicht einfach um 3.`],
+[`Oben und unten vertauschen`,`Oben = x (rechts/links), unten = y (hoch/runter)`,`Wie bei Punkten: erst x, dann y.`]],
+quiz:[{l:1,q:`P(1 | 2) wird mit ${vec('3','4')} verschoben. x-Wert von P'?`,a:4},{l:1,q:`Und der y-Wert von P'?`,a:6},
+{l:1,q:`y = 5x − 2 wird verschoben. Welche Steigung hat die neue Gerade?`,a:5},
+{l:2,q:`g: y = −x + 2 wird mit ${vec('0','−5')} verschoben. Neues t?`,a:-3},
+{l:3,q:`g: y = 3x wird mit ${vec('1','0')} verschoben. Neues t?`,a:-3,h:`(0 | 0) → (1 | 0). Dann 0 = 3 · 1 + t`},
+{l:3,q:`g: y = 2x + 1 wird mit ${vec('−1','2')} verschoben. Neues t?`,a:5,h:`(0 | 1) → (−1 | 3). Dann 3 = 2 · (−1) + t`}]},
+
+{id:'m-lin-text',t:'Textaufgaben mit linearen Funktionen',kurz:'Aus dem Text die Gleichung machen: ein fester Plan',tag:'Probe-Thema',probe:1,
+intro:`<p>Bei Textaufgaben ist das Rechnen meistens leicht. Schwer ist, <b>aus dem Text die Gleichung</b> zu machen. Dafür gibt es einen festen Plan, den du jedes Mal gleich abarbeitest.</p>
+<p>Fast jede Textaufgabe hat einen <b>festen Betrag</b> (das ist t) und etwas, das <b>pro Stück, pro Minute, pro km</b> dazukommt oder weggeht (das ist m).</p>
+<div class="tbl"><table class="t"><tr><th>Signalwörter im Text</th><th>wird zu</th></tr>
+<tr><td>Grundgebühr, Startgebühr, Anfahrt, am Anfang, schon, bereits</td><td><b>t</b></td></tr>
+<tr><td>pro, je, jede, für jede Minute, in jeder Stunde</td><td><b>m</b></td></tr>
+<tr><td>nimmt ab, sinkt, verbraucht, wird abgelassen, brennt ab</td><td><b>m negativ</b></td></tr></table></div>`,
+steps:[
+[`Zweimal lesen, Frage unterstreichen`,`Erst ganz lesen. Beim zweiten Mal die eigentliche Frage unterstreichen. Was willst du am Ende wissen?`],
+[`Zahlen mit Einheit markieren`,`Fester Betrag in einer Farbe (t), Betrag „pro …“ in einer anderen Farbe (m). Wird etwas weniger? Dann Minus vor m.`],
+[`x und y in Worten festlegen`,`Schreib hin: <b>x = Anzahl der Minuten</b>, <b>y = Kosten in €</b>. Das verhindert Verwechslungen.`],
+[`Gleichung aufstellen`,`y = m · x + t mit deinen Zahlen.`],
+[`Was ist gesucht: x oder y?`,`Ist y gesucht (z. B. Kosten), setzt du x ein und rechnest aus. Ist x gesucht (z. B. wie viele Minuten), setzt du y ein und löst nach x auf.`],
+[`Antwortsatz und Check`,`Ganzer Satz mit Einheit. Dann fragen: Ist das realistisch? Eine Kerze, die 300 Stunden brennt, oder ein Taxi für 2 000 €, da stimmt was nicht.`]],
+merke:`<p><b>Fester Betrag → t. &nbsp; Pro-Betrag → m. &nbsp; Weniger werden → m negativ.</b></p><p><mark>Immer: x und y in Worten festlegen, am Ende Antwortsatz mit Einheit.</mark></p>`,
+bsp:[{q:`Eine Kerze ist 24 cm hoch. Pro Stunde brennt sie 1,5 cm ab. Nach wie vielen Stunden ist sie abgebrannt?`,s:[`Festlegen: x = Stunden, y = Höhe der Kerze in cm.`,`Am Anfang 24 cm → t = 24. Pro Stunde 1,5 cm weniger → m = −1,5.`,`Gleichung: y = −1,5x + 24.`,`„Abgebrannt“ heißt Höhe 0. Also y = 0 einsetzen: 0 = −1,5x + 24.`,`+ 1,5x auf beiden Seiten: 1,5x = 24. Durch 1,5: x = 16.`],r:`Die Kerze ist nach 16 Stunden abgebrannt.`},
+{q:`Fitnessstudio A: 20 € Aufnahmegebühr und 30 € pro Monat. Studio B: keine Aufnahmegebühr, 35 € pro Monat. Nach wie vielen Monaten kosten beide gleich viel?`,s:[`x = Monate, y = Gesamtkosten in €.`,`A: y = 30x + 20. &nbsp; B: y = 35x.`,`Gleich teuer heißt: gleichsetzen. 30x + 20 = 35x.`,`− 30x auf beiden Seiten: 20 = 5x. Durch 5: x = 4.`,`Check: A: 30 · 4 + 20 = 140 €. B: 35 · 4 = 140 €. ✓`],r:`Nach 4 Monaten zahlt man bei beiden 140 €. Danach ist A günstiger.`},
+{q:`Ein Handwerker berechnet für 2 Stunden 130 € und für 5 Stunden 280 €. Wie viel kostet eine Stunde, und wie hoch ist die Anfahrt?`,s:[`x = Stunden, y = Preis in €. Das sind zwei Punkte: A(2 | 130) und B(5 | 280).`,`m = ${fr('280 − 130','5 − 2')} = ${fr('150','3')} = 50. Das ist der Preis pro Stunde.`,`A einsetzen: 130 = 50 · 2 + t, also 130 = 100 + t, t = 30. Das ist die Anfahrt.`,`Gleichung: y = 50x + 30.`],r:`Eine Stunde kostet 50 €, die Anfahrt 30 €.`}],
+fehler:[[`Taxi 3 € Grundgebühr, 2 € pro km: y = 3x + 2`,`y = 2x + 3`,`Das „pro km“ gehört zum x. Der feste Betrag steht allein.`],
+[`Nur „16“ als Antwort`,`„Nach 16 Stunden ist die Kerze abgebrannt.“`,`Ohne Antwortsatz und Einheit gibt es oft Punktabzug.`],
+[`Minuten und Stunden mischen`,`Alles in dieselbe Einheit umrechnen`,`Steht der Preis pro Stunde, aber die Zeit in Minuten, erst umrechnen: 30 min = 0,5 h.`]],
+quiz:[{l:1,q:`Ein Taxi kostet 3,50 € Grundgebühr und 2 € pro km. Wie groß ist t?`,a:3.5},{l:1,q:`Und wie groß ist m?`,a:2},
+{l:2,q:`Ein Becken mit 500 Litern wird abgelassen, 20 Liter pro Minute. Welche Gleichung stimmt? (x = Minuten, y = Liter)`,o:[`y = 20x + 500`,`y = −20x + 500`,`y = 500x − 20`,`y = −500x + 20`],a:1},
+{l:2,q:`Nach wie vielen Minuten ist das Becken leer?`,a:25,h:`0 = −20x + 500`},
+{l:3,q:`Stromtarif A: 10 € + 0,30 € pro kWh. Tarif B: 16 € + 0,25 € pro kWh. Bei wie vielen kWh kosten beide gleich viel?`,a:120,h:`0,30x + 10 = 0,25x + 16`},
+{l:3,q:`Handwerker: 3 Stunden kosten 150 €, 6 Stunden kosten 270 €. Wie hoch ist die Anfahrt in €?`,a:30,h:`m = 120 : 3 = 40. Dann 150 = 40 · 3 + t`}]},
+
+{id:'m-lin-test',t:'Probe-Training: Lineare Funktionen',kurz:'12 gemischte Aufgaben wie in der Probe',tag:'Probe-Thema',probe:1,test:1,
+intro:`<p>Hier ist alles gemischt, wie in einer echten Probe. Nimm einen Zettel, rechne jede Aufgabe <b>erst ganz aus</b> und tipp dann das Ergebnis ein.</p><p>Wenn du unter 9 von 12 hast: Geh zurück zu dem Thema, bei dem du falsch lagst.</p>`,
+quiz:[{l:1,q:`y = −2x + 5. m = ?`,a:-2},{l:1,q:`y = −2x + 5. t = ?`,a:5},
+{l:1,q:`Liegt P(3 | −1) auf y = −x + 2?`,o:[`Ja`,`Nein`],a:0},
+{l:2,q:`A(6 | 5), B(2 | 3). m = ?`,a:0.5,s:'1/2'},{l:2,q:`Gerade durch A(6 | 5) und B(2 | 3). t = ?`,a:2,h:`5 = ½ · 6 + t`},
+{l:2,q:`Welche Gerade ist parallel zu y = 0,5x + 2 und geht durch P(0 | −1)?`,o:[`y = −2x − 1`,`y = 0,5x − 1`,`y = 2x − 1`,`y = −0,5x + 2`],a:1},
+{l:2,q:`Steigung der Senkrechten zu y = 4x − 3?`,a:-0.25,s:'−1/4'},
+{l:2,q:`Steigungsdreieck: 5 nach rechts, 2 nach unten. m = ?`,a:-0.4,s:'−2/5'},
+{l:3,q:`Stehen y = −⅔x + 1 und y = 1,5x − 2 senkrecht?`,o:[`Ja`,`Nein`],a:0},
+{l:3,q:`y = x + 1 wird mit ${vec('3','0')} verschoben. Neues t?`,a:-2,h:`(0 | 1) → (3 | 1). 1 = 3 + t`},
+{l:3,q:`Nullstelle von y = ¼x − 2: x = ?`,a:8},
+{l:3,q:`Taxi: 4 € Grundpreis, 2,50 € pro km. Was kosten 12 km in €?`,a:34,h:`y = 2,5x + 4`}]},
+{id:'m-wurzeln',t:'Wurzeln und reelle Zahlen',kurz:'Was √ bedeutet, Wurzeln vereinfachen, mit Wurzeln rechnen',tag:'alle Zweige',
+intro:`<p>Die Wurzel ist die <mark>Umkehrung vom Quadrieren</mark>. Quadrieren heißt: eine Zahl mal sich selbst. 5² = 5 · 5 = 25.</p><p>Die Wurzel fragt rückwärts: <b>Welche Zahl mal sich selbst ergibt 25?</b> Antwort: 5. Also ist √25 = 5.</p><p>Stell dir ein Quadrat vor. Die Fläche kennst du, die Seite suchst du. Die Seite ist die Wurzel aus der Fläche.</p>`,
+img:'quadrat',cap:'Ein Quadrat mit 25 Kästchen hat die Seitenlänge 5.',
+steps:[
+['Quadratzahlen auswendig können','Ohne die geht es nicht. 1, 4, 9, 16, 25, 36, 49, 64, 81, 100, 121, 144, 169, 196, 225. Schreib sie dir auf einen Zettel neben den Schreibtisch.'],
+['Wurzel aus einer Quadratzahl','Frag dich: Welche Zahl mal sich selbst gibt das? √81: 9 · 9 = 81, also <span class="f">√81 = 9</span>.'],
+['Unter der Wurzel darf nichts Negatives stehen','√(−9) gibt es bei uns nicht. Keine Zahl mal sich selbst ergibt etwas Negatives, denn (−3) · (−3) = +9.'],
+['Wurzel teilweise ziehen (vereinfachen)','Zerlege die Zahl in <b>Quadratzahl · Rest</b>. Nimm die größte Quadratzahl, die passt. Dann ziehst du nur aus der Quadratzahl die Wurzel.<div class="calc">√72 = √(36 · 2) = √36 · √2 = 6√2</div>'],
+['Wurzeln malnehmen und teilen','Du darfst zusammenfassen: <span class="f">√a · √b = √(a · b)</span> und <span class="f">√a : √b = √(a : b)</span>.<div class="calc">√2 · √8 = √16 = 4<br>√50 : √2 = √25 = 5</div>'],
+['Wurzeln addieren','Nur <b>gleiche</b> Wurzeln kann man zusammenzählen, wie bei Äpfeln: 3 Äpfel + 5 Äpfel = 8 Äpfel.<div class="calc">3√2 + 5√2 = 8√2<br>√8 + √18 = 2√2 + 3√2 = 5√2</div>'],
+['Nenner rational machen','Im Nenner soll keine Wurzel stehen. Erweitere den Bruch mit der Wurzel aus dem Nenner. Weil √3 · √3 = 3, verschwindet die Wurzel unten.<div class="calc">6/√3 = (6 · √3)/(√3 · √3) = 6√3/3 = 2√3</div>']],
+merke:`<p><b>√a</b> ist die Zahl, die mit sich selbst multipliziert <b>a</b> ergibt. Sie ist nie negativ.</p><p>√a · √b = √(a·b) &nbsp;&nbsp; √a : √b = √(a:b)</p><p><mark>Aber: √(a + b) ist NICHT √a + √b!</mark></p><p>Zahlen wie √2 oder π kann man nicht als Bruch schreiben. Sie heißen <b>irrational</b>. Alle Brüche und alle irrationalen Zahlen zusammen sind die <b>reellen Zahlen ℝ</b>.</p>`,
+img2:'mengen',cap2:'Jede Menge steckt in der nächstgrößeren.',
+bsp:[{q:'Vereinfache √75 + √12.',s:['Suche in 75 die größte Quadratzahl: 75 = 25 · 3.','Also √75 = √25 · √3 = 5√3.','Suche in 12 die größte Quadratzahl: 12 = 4 · 3.','Also √12 = √4 · √3 = 2√3.','Jetzt sind es gleiche Wurzeln (√3). Zusammenzählen: 5√3 + 2√3.'],r:'Ergebnis: 7√3'},
+{q:'Mach den Nenner rational: 10/√5',s:['Mit √5 erweitern, oben und unten: (10 · √5)/(√5 · √5).','Unten: √5 · √5 = 5. Also 10√5/5.','Kürzen: 10 : 5 = 2.'],r:'Ergebnis: 2√5'}],
+fehler:[['√(9 + 16) = 3 + 4 = 7','√(9 + 16) = √25 = 5','Erst unter der Wurzel ausrechnen, dann die Wurzel ziehen. Bei Plus darfst du nicht aufteilen.'],
+['2√3 + 3√2 = 5√5','Geht nicht weiter zusammenzufassen','√3 und √2 sind verschiedene „Sorten“. Wie Äpfel und Birnen.'],
+['√72 = √(9 · 8) = 3√8','√72 = √(36 · 2) = 6√2','3√8 ist nicht falsch, aber nicht fertig. Immer die größte Quadratzahl nehmen.']],
+quiz:[{q:'√144 = ?',a:12},{q:'√0,25 = ?',a:0.5,h:'0,5 · 0,5 = ?'},
+{q:'Welche Vereinfachung von √50 ist richtig?',o:['25√2','5√2','2√5','5√10'],a:1,h:'50 = 25 · 2'},
+{q:'√12 · √3 = ?',a:6,h:'Zusammenfassen: √(12 · 3)'},
+{q:'Was ist 6/√2 mit rationalem Nenner?',o:['3√2','6√2','√3','3'],a:0,h:'Mit √2 erweitern: 6√2/2'},
+{q:'√27 + √12 = ?',o:['√39','5√3','6√3','13√3'],a:1,h:'√27 = 3√3 und √12 = 2√3'}]},
+
+{id:'m-streckung',t:'Zentrische Streckung und Strahlensätze',kurz:'Figuren vergrößern, fehlende Längen mit Verhältnissen berechnen',tag:'alle Zweige',
+intro:`<p>Bei der <b>zentrischen Streckung</b> vergrößerst oder verkleinerst du eine Figur von einem Punkt Z aus. Das ist wie ein Beamer: Je weiter weg die Wand, desto größer das Bild.</p><p>Der <b>Streckungsfaktor k</b> sagt, wie viel größer. k = 2 heißt: alles doppelt so lang. k = 0,5 heißt: alles halb so lang.</p>`,
+img:'streck',cap:'Dreieck ABC wird von Z aus mit k = 2 gestreckt.',
+steps:[
+['Strahl von Z durch den Punkt zeichnen','Für jeden Eckpunkt: Lineal an Z und an den Punkt, Strahl verlängern.'],
+['Abstand messen und mal k nehmen','Ist ZA = 3 cm und k = 2, dann ist ZA\' = 2 · 3 cm = 6 cm. Den Bildpunkt A\' trägst du auf dem Strahl ab.'],
+['Bildpunkte verbinden','A\', B\', C\' verbinden. Das Bild hat die <b>gleichen Winkel</b> wie das Original.'],
+['Längen und Flächen umrechnen','Jede Strecke wird k-mal so lang. Die Fläche wird aber <mark>k²-mal</mark> so groß. Bei k = 2 also 4-mal so groß.'],
+['Strahlensatz-Figur erkennen','Zwei Strahlen gehen von Z aus. Zwei <b>parallele</b> Linien schneiden beide Strahlen. Dann gelten die Strahlensätze.'],
+['Verhältnis aufstellen und ausrechnen','Schreib immer „klein durch groß = klein durch groß“, mit den passenden Strecken. Dann nach der Unbekannten auflösen.']],
+merke:`<p><b>Länge im Bild = k · Länge im Original</b> &nbsp; <b>Fläche im Bild = k² · Fläche im Original</b></p><p><b>1. Strahlensatz:</b> ZA : ZA' = ZB : ZB' &nbsp;(Abschnitte auf den Strahlen)</p><p><b>2. Strahlensatz:</b> ZA : ZA' = AB : A'B' &nbsp;(<mark>Parallelen immer ab Z messen!</mark>)</p>`,
+img2:'strahl',cap2:'Die rote und die blaue Linie sind parallel.',
+bsp:[{q:'In der Figur oben ist ZA = 4, AA\' = 2 und AB = 3. Wie lang ist A\'B\'?',s:['Erst ZA\' ausrechnen: ZA\' = ZA + AA\' = 4 + 2 = 6.','2. Strahlensatz, weil eine Parallele gesucht ist: AB : A\'B\' = ZA : ZA\'.','Einsetzen: 3 : A\'B\' = 4 : 6.','Umstellen: A\'B\' = 3 · 6 : 4 = 18 : 4.'],r:'A\'B\' = 4,5'},
+{q:'Ein 2 m langer Stab wirft einen 3 m langen Schatten. Ein Baum wirft zur gleichen Zeit einen 12 m langen Schatten. Wie hoch ist der Baum?',s:['Sonnenstrahlen sind parallel, Stab und Baum stehen beide senkrecht. Das ist eine Strahlensatz-Figur.','Verhältnis: Höhe : Schatten ist bei beiden gleich. 2 : 3 = h : 12.','Umstellen: h = 2 · 12 : 3 = 24 : 3.'],r:'Der Baum ist 8 m hoch.'}],
+fehler:[['AB : A\'B\' = AA\' : ZA\'','AB : A\'B\' = ZA : ZA\'','Beim 2. Strahlensatz immer die ganzen Strecken ab Z nehmen, nicht nur das Stück dazwischen.'],
+['k = 3, Fläche wird 3-mal so groß','Fläche wird 3² = 9-mal so groß','Länge und Breite werden beide 3-mal so groß. 3 · 3 = 9.']],
+quiz:[{q:'Ein Dreieck wird mit k = 3 gestreckt. Eine Seite ist 4 cm lang. Wie lang ist sie im Bild (in cm)?',a:12},
+{q:'Ein Rechteck hat 5 cm² Fläche. Es wird mit k = 2 gestreckt. Neue Fläche in cm²?',a:20,h:'Fläche mal k², also mal 4.'},
+{q:'ZA = 5, ZA\' = 10, AB = 4. Wie lang ist A\'B\'?',a:8,h:'AB : A\'B\' = ZA : ZA\''},
+{q:'Was bedeutet k = 0,5?',o:['Die Figur wird doppelt so groß','Die Figur wird halb so groß (Längen)','Die Figur wird gespiegelt','Nichts ändert sich'],a:1}]},
+
+{id:'m-pythagoras',t:'Satz des Pythagoras',kurz:'Fehlende Seite im rechtwinkligen Dreieck berechnen',tag:'alle Zweige',
+intro:`<p>Er gilt <mark>nur im rechtwinkligen Dreieck</mark> (ein Winkel ist 90°).</p><p>Die längste Seite liegt gegenüber vom rechten Winkel. Sie heißt <b>Hypotenuse</b> und meistens <b>c</b>. Die beiden kürzeren Seiten am rechten Winkel heißen <b>Katheten</b> (a und b).</p><p>Baut man auf jede Seite ein Quadrat, dann passen die beiden kleinen Quadrate zusammen genau in das große.</p>`,
+img:'pyth',cap:'3² + 4² = 5², also 9 + 16 = 25.',
+steps:[
+['Rechten Winkel finden','Wo ist das Kästchen mit dem Punkt? Die Seite gegenüber ist die Hypotenuse c. Markier sie farbig.'],
+['Formel hinschreiben','<span class="f">a² + b² = c²</span>. Schreib sie jedes Mal hin, auch wenn du sie kennst.'],
+['Fall 1: Hypotenuse gesucht','Beide Katheten quadrieren, addieren, Wurzel ziehen.<div class="calc">c = √(a² + b²)</div>'],
+['Fall 2: Kathete gesucht','Großes Quadrat <b>minus</b> kleines Quadrat, dann Wurzel ziehen.<div class="calc">b = √(c² − a²)</div>'],
+['Ergebnis prüfen','Die Hypotenuse muss die längste Seite sein. Ist deine Kathete länger als c, hast du falsch gerechnet.']],
+merke:`<p>Im rechtwinkligen Dreieck gilt: <b>Kathete² + Kathete² = Hypotenuse²</b></p><p><mark>Hypotenuse gesucht: plus. Kathete gesucht: minus.</mark></p>`,
+bsp:[{q:'Ein rechtwinkliges Dreieck hat die Hypotenuse c = 13 cm und die Kathete a = 5 cm. Berechne b.',s:['Gesucht ist eine Kathete, also wird minus gerechnet.','b² = c² − a² = 13² − 5²','b² = 169 − 25 = 144','b = √144'],r:'b = 12 cm'},
+{q:'Eine 5 m lange Leiter lehnt an einer Wand. Unten steht sie 1,40 m von der Wand weg. Wie hoch reicht sie?',s:['Skizze: Wand, Boden und Leiter bilden ein rechtwinkliges Dreieck. Der rechte Winkel ist zwischen Wand und Boden.','Die Leiter liegt gegenüber vom rechten Winkel, sie ist die Hypotenuse: c = 5 m.','Gesucht ist die Höhe an der Wand, eine Kathete: h² = 5² − 1,4²','h² = 25 − 1,96 = 23,04','h = √23,04'],r:'h = 4,8 m'}],
+fehler:[['b² = 5² + 13²','b² = 13² − 5²','Wenn eine Kathete gesucht ist, wird subtrahiert.'],
+['c = 3 + 4 = 7','c = √(9 + 16) = 5','Erst quadrieren, dann addieren, dann Wurzel. Nicht einfach die Seiten addieren.'],
+['Pythagoras im beliebigen Dreieck','Nur mit rechtem Winkel','Ohne 90° gilt der Satz nicht. Manchmal musst du dir erst ein rechtwinkliges Dreieck einzeichnen.']],
+quiz:[{q:'a = 6 cm, b = 8 cm. Wie lang ist die Hypotenuse c (in cm)?',a:10},
+{q:'c = 10 cm, a = 6 cm. Wie lang ist b (in cm)?',a:8,h:'b² = 100 − 36'},
+{q:'Ein Rechteck ist 12 cm lang und 5 cm breit. Wie lang ist die Diagonale (in cm)?',a:13,h:'Die Diagonale ist die Hypotenuse.'},
+{q:'Welche Seite ist die Hypotenuse?',o:['Die kürzeste Seite','Die Seite gegenüber vom rechten Winkel','Die Seite unten','Die Seite am rechten Winkel'],a:1}]},
+
+{id:'m-trigo',t:'Sinus, Kosinus, Tangens',kurz:'Seiten und Winkel im rechtwinkligen Dreieck',tag:'alle Zweige',
+intro:`<p>Mit Pythagoras brauchst du zwei Seiten, um die dritte zu finden. Mit <b>sin, cos und tan</b> reichen <b>eine Seite und ein Winkel</b>. Oder du findest einen Winkel aus zwei Seiten.</p><p>Wichtig: Die Namen der Katheten hängen davon ab, <mark>von welchem Winkel du schaust</mark>.</p>`,
+img:'trig',cap:'Gegenkathete liegt gegenüber von α, Ankathete liegt an α.',
+steps:[
+['Rechten Winkel und Hypotenuse markieren','Die Hypotenuse liegt immer gegenüber vom 90°-Winkel.'],
+['Vom Winkel α aus schauen','Die Kathete, die α berührt, ist die <b>Ankathete</b>. Die andere ist die <b>Gegenkathete</b>.'],
+['Passende Formel wählen','Merksatz: <b>GAGA HühnerHof AG</b><div class="calc">sin α = <u>G</u>egenkathete : <u>H</u>ypotenuse<br>cos α = <u>A</u>nkathete : <u>H</u>ypotenuse<br>tan α = <u>G</u>egenkathete : <u>A</u>nkathete</div>Nimm die Formel, in der die bekannte und die gesuchte Größe vorkommen.'],
+['Einsetzen und umstellen','Ist eine Seite gesucht, stellst du um. Ist ein Winkel gesucht, nimmst du am Taschenrechner sin⁻¹, cos⁻¹ oder tan⁻¹ (meist mit SHIFT).'],
+['Taschenrechner auf DEG','Prüf, dass oben „D“ oder „DEG“ steht. Sonst rechnet er im falschen Winkelmaß.']],
+merke:`<p><b>sin α = G : H</b> &nbsp; <b>cos α = A : H</b> &nbsp; <b>tan α = G : A</b></p><p><mark>Funktioniert nur im rechtwinkligen Dreieck.</mark></p>`,
+bsp:[{q:'Hypotenuse = 10 cm, α = 30°. Wie lang ist die Gegenkathete?',s:['Bekannt: Hypotenuse und Winkel. Gesucht: Gegenkathete. G und H, also Sinus.','sin 30° = G : 10','Umstellen (mal 10): G = 10 · sin 30°','Taschenrechner: sin 30° = 0,5. Also G = 10 · 0,5.'],r:'Gegenkathete = 5 cm'},
+{q:'Gegenkathete = 3 cm, Ankathete = 4 cm. Wie groß ist α?',s:['G und A bekannt, also Tangens.','tan α = 3 : 4 = 0,75','Winkel gesucht: α = tan⁻¹(0,75)','Taschenrechner: SHIFT, tan, 0,75.'],r:'α ≈ 36,9°'}],
+fehler:[['Gegenkathete von α = Seite an α','Gegenkathete liegt gegenüber von α','Immer zuerst den Winkel markieren, dann benennen.'],
+['α = 0,75','α = tan⁻¹(0,75) ≈ 36,9°','0,75 ist der Tangenswert, nicht der Winkel. Du brauchst die Umkehrtaste.']],
+quiz:[{q:'Hypotenuse 8 cm, α = 30°. Gegenkathete in cm?',a:4,h:'G = 8 · sin 30° = 8 · 0,5'},
+{q:'Welche Formel brauchst du, wenn Ankathete und Hypotenuse bekannt sind?',o:['sin','cos','tan','Pythagoras geht nicht'],a:1},
+{q:'Gegenkathete = Ankathete = 5 cm. Wie groß ist α in Grad?',a:45,h:'tan α = 5 : 5 = 1'}]},
+
+{id:'m-lgs',t:'Lineare Gleichungssysteme',kurz:'Zwei Gleichungen, zwei Unbekannte: Gleichsetzen, Einsetzen, Addieren',tag:'alle Zweige',
+intro:`<p>Du hast <b>zwei Gleichungen</b> mit <b>zwei Unbekannten</b> (x und y). Gesucht ist das Zahlenpaar, das <mark>beide</mark> Gleichungen gleichzeitig erfüllt.</p><p>Im Koordinatensystem ist jede Gleichung eine Gerade. Die Lösung ist der <b>Schnittpunkt</b>.</p>`,
+img:()=>koord({xmin:-1,xmax:7,ymin:-1,ymax:8,u:30,alt:'Zwei Geraden schneiden sich im Punkt (2|5)',fns:[{f:x=>2*x+1,cls:'ln1'},{f:x=>-x+7,cls:'ln2'}],
+ pts:[{x:2,y:5,cls:'dot',l:'S(2|5)',dx:10,dy:-6}],extra:(X,Y)=>`<text class="lbl" x="${X(3)+6}" y="${Y(7)+4}" style="fill:var(--blue)">y = 2x + 1</text><text class="lbl" x="${X(5)}" y="${Y(2)-8}" style="fill:var(--red)">y = −x + 7</text>`}),cap:'Die Lösung ist der Schnittpunkt der beiden Geraden.',
+steps:[
+['Gleichungen nummerieren','Schreib I und II davor. So weißt du immer, mit welcher du arbeitest.'],
+['Verfahren wählen','Stehen beide schon als „y = …“ da: <b>Gleichsetzen</b>. Steht eine als „y = …“ oder „x = …“ da: <b>Einsetzen</b>. Haben beide eine Zahl vor x oder y, die sich wegheben lässt (z. B. +3y und −3y): <b>Addieren</b>.'],
+['Eine Unbekannte rauswerfen','Nach dem Verfahren hast du nur noch eine Gleichung mit einer Unbekannten. Die löst du ganz normal.'],
+['Zweite Unbekannte ausrechnen','Das Ergebnis in eine der beiden Anfangsgleichungen einsetzen.'],
+['Probe in beiden Gleichungen','Stimmt es in I <b>und</b> II? Erst dann ist es richtig.'],
+['Lösungsmenge hinschreiben','L = {(x|y)}, zum Beispiel L = {(2|5)}.']],
+merke:`<p><b>Gleichsetzen:</b> y = … und y = … → rechte Seiten gleichsetzen.</p><p><b>Einsetzen:</b> y = … in die andere Gleichung einsetzen.</p><p><b>Addieren:</b> Gleichungen so malnehmen, dass x oder y beim Addieren wegfällt.</p><p><mark>Parallele Geraden: keine Lösung. Gleiche Gerade: unendlich viele Lösungen.</mark></p>`,
+bsp:[{q:'Gleichsetzen: I: y = 2x + 1 und II: y = −x + 7',s:['Beide Gleichungen fangen mit y = an. Also rechte Seiten gleichsetzen: 2x + 1 = −x + 7.','+x auf beiden Seiten: 3x + 1 = 7.','−1: 3x = 6. Durch 3: x = 2.','x = 2 in I einsetzen: y = 2 · 2 + 1 = 5.','Probe in II: −2 + 7 = 5. Stimmt.'],r:'L = {(2|5)}'},
+{q:'Addieren: I: 2x + 3y = 12 und II: 4x − 3y = 6',s:['+3y und −3y heben sich beim Addieren weg.','I + II: 2x + 4x + 3y − 3y = 12 + 6, also 6x = 18.','x = 3.','In I einsetzen: 2 · 3 + 3y = 12, also 6 + 3y = 12, 3y = 6, y = 2.','Probe in II: 4 · 3 − 3 · 2 = 12 − 6 = 6. Stimmt.'],r:'L = {(3|2)}'},
+{q:'Textaufgabe: 3 Erwachsene und 2 Kinder zahlen im Kino 41 €. 1 Erwachsener und 2 Kinder zahlen 23 €. Was kostet ein Ticket?',s:['Unbekannte festlegen: e = Preis Erwachsener, k = Preis Kind.','I: 3e + 2k = 41 und II: e + 2k = 23.','I − II: 3e − e + 2k − 2k = 41 − 23, also 2e = 18, e = 9.','In II: 9 + 2k = 23, 2k = 14, k = 7.','Probe in I: 27 + 14 = 41. Stimmt.'],r:'Erwachsene 9 €, Kinder 7 €.'}],
+fehler:[['Nur x ausrechnen und aufhören','x und y angeben','Die Lösung ist immer ein Paar.'],
+['I + II, aber Vorzeichen vergessen: 3y + (−3y) = 6y','3y + (−3y) = 0','Plus und Minus heben sich auf. Schreib die Vorzeichen immer mit.'],
+['Probe nur in einer Gleichung','Probe in beiden','Eine falsche Lösung kann zufällig in einer Gleichung passen.']],
+quiz:[{q:'I: y = x + 2, II: y = −x + 6. Wie groß ist x?',a:2,h:'x + 2 = −x + 6'},{q:'Und wie groß ist y?',a:4},
+{q:'I: x + y = 10, II: x − y = 2. Wie groß ist x?',a:6,h:'Addiere I und II: 2x = 12'},
+{q:'Zwei Geraden haben die gleiche Steigung, aber verschiedene t. Wie viele Lösungen?',o:['Genau eine','Keine','Unendlich viele','Zwei'],a:1}]},
+
+{id:'m-zufall',t:'Daten und Zufall',kurz:'Baumdiagramm, Pfadregeln, Wahrscheinlichkeit',tag:'alle Zweige',
+intro:`<p>Bei Zufallsversuchen weißt du nicht vorher, was passiert. Aber du kannst sagen, wie <b>wahrscheinlich</b> etwas ist.</p><p>Bei mehreren Schritten hintereinander hilft das <b>Baumdiagramm</b>. Jeder Ast ist eine Möglichkeit.</p>`,
+img:'baum',cap:'Urne mit 3 roten und 2 blauen Kugeln. Zweimal ziehen, ohne Zurücklegen.',
+steps:[
+['Erste Stufe zeichnen','Welche Ergebnisse gibt es beim ersten Zug? An jeden Ast die Wahrscheinlichkeit schreiben. Alle Äste an einem Punkt ergeben zusammen 1.'],
+['Zweite Stufe zeichnen','Ohne Zurücklegen ändert sich der Inhalt der Urne! Nach einer roten Kugel sind nur noch 2 rote und 2 blaue drin.'],
+['1. Pfadregel: entlang malnehmen','Wahrscheinlichkeit für einen Weg = alle Zahlen auf dem Weg malnehmen.'],
+['2. Pfadregel: Wege addieren','Gehören mehrere Wege zum Ereignis, addierst du ihre Ergebnisse.']],
+merke:`<p><b>Entlang eines Pfades: multiplizieren.</b></p><p><b>Mehrere Pfade: addieren.</b></p><p><mark>Ohne Zurücklegen: Nenner wird beim 2. Zug um 1 kleiner.</mark></p>`,
+bsp:[{q:'Wie wahrscheinlich ist es, genau eine rote und eine blaue Kugel zu ziehen (Urne oben)?',s:['Zwei Wege passen: rot-blau und blau-rot.','rot-blau: 3/5 · 2/4 = 6/20','blau-rot: 2/5 · 3/4 = 6/20','Addieren: 6/20 + 6/20 = 12/20, gekürzt 3/5.'],r:'P = 3/5 = 60 %'}],
+fehler:[['Ohne Zurücklegen: 3/5 · 3/5','3/5 · 2/4','Eine rote Kugel fehlt jetzt, und insgesamt sind nur noch 4 Kugeln drin.']],
+quiz:[{q:'Eine Münze wird zweimal geworfen. P(zweimal Kopf) als Dezimalzahl?',a:0.25,h:'1/2 · 1/2'},
+{q:'Urne oben: P(blau, blau) als Bruch?',o:['1/10','4/25','1/5','2/9'],a:0,h:'2/5 · 1/4'}]}
+]},
+
+deutsch:{name:'Deutsch',c:'var(--s-deutsch)',desc:'Erörterung, Bewerbung, indirekte Rede, Kommas',topics:[
+{id:'d-eroerterung',t:'Erörterung schreiben',kurz:'Argumentieren mit Behauptung, Begründung, Beispiel',tag:'Klasse 9',
+intro:`<p>In einer Erörterung denkst du über eine Frage nach und kommst zu einer begründeten Meinung. Zum Beispiel: <i>„Sollen Handys an Schulen verboten werden?“</i></p><p><b>Linear</b> (steigernd): Du sammelst Argumente für eine Seite. <b>Dialektisch</b> (Pro und Contra): Du wägst beide Seiten ab.</p>`,
+img:'erorterung',cap:'Im Hauptteil kommt das stärkste Argument zum Schluss.',
+steps:[
+['Frage genau lesen','Unterstreiche das Thema. Ist es eine Entscheidungsfrage (ja/nein, dann meist dialektisch) oder eine Frage nach Gründen (linear)?'],
+['Stoffsammlung','Schreib 5 Minuten lang alles auf, was dir einfällt. Ordne dann in Pro und Contra.'],
+['Argumente nach 3B bauen','<b>Behauptung:</b> Handys lenken im Unterricht ab. <b>Begründung:</b> Nachrichten und Spiele ziehen die Aufmerksamkeit weg. <b>Beispiel:</b> Wer während der Stunde chattet, verpasst die Erklärung.'],
+['Reihenfolge festlegen','Schwächstes Argument zuerst, stärkstes zuletzt. Das letzte bleibt im Kopf.'],
+['Einleitung und Schluss','Einleitung: aktueller Anlass + Frage. Schluss: deine Meinung, kurz begründet, ein Ausblick oder Kompromiss.'],
+['Überleitungen benutzen','„Ein weiterer Grund ist …“, „Noch wichtiger ist …“, „Dagegen spricht …“, „Abschließend …“']],
+merke:`<p><b>Argument = Behauptung + Begründung + Beispiel</b></p><p><mark>Im Hauptteil steigern: wichtigstes Argument zuletzt.</mark></p>`,
+bsp:[],fehler:[['Nur Behauptungen aneinanderreihen','Jede Behauptung begründen und mit Beispiel belegen','Ohne Begründung ist es nur eine Meinung, kein Argument.'],['„Ich finde das gut, weil es gut ist.“','Eine echte Begründung nennen','Das ist ein Zirkelschluss.']],
+quiz:[{q:'Was gehört NICHT zu einem vollständigen Argument?',o:['Behauptung','Begründung','Beispiel','Überschrift'],a:3},
+{q:'Wo steht das stärkste Argument?',o:['Am Anfang','In der Mitte','Am Ende des Hauptteils','In der Einleitung'],a:2}]},
+{id:'d-bewerbung',t:'Bewerbung und Lebenslauf',kurz:'Anschreiben für Praktikum oder Ausbildung',tag:'Klasse 9',
+intro:`<p>In der 9. Klasse schreibst du Bewerbungen für Praktikum oder Ausbildung. Eine Bewerbung besteht aus <b>Anschreiben</b>, <b>Lebenslauf</b> und <b>Zeugniskopie</b>.</p>`,
+steps:[['Kopf','Oben links deine Adresse, darunter die Firma mit Ansprechpartner. Rechts das Datum.'],['Betreff','Fett, ohne das Wort „Betreff“: <i>Bewerbung um einen Praktikumsplatz als Mechatroniker</i>.'],['Anrede','Wenn möglich mit Namen: „Sehr geehrte Frau Yilmaz,“ Danach klein weiterschreiben.'],['Einleitung','Warum schreibst du? Woher kennst du die Stelle?'],['Hauptteil','Warum dieser Beruf, warum diese Firma, was kannst du schon? Mit Beispielen (Hobby, Schulfach, Ehrenamt).'],['Schluss und Gruß','„Über eine Einladung zu einem Vorstellungsgespräch freue ich mich.“ Dann „Mit freundlichen Grüßen“, Unterschrift.']],
+merke:`<p><mark>Höchstens eine Seite. Keine Rechtschreibfehler. Jemand anderes liest Korrektur.</mark></p><p>Lebenslauf: tabellarisch, das Neueste oben.</p>`,
+bsp:[],fehler:[['„Hiermit bewerbe ich mich …“ als erster Satz','Ein eigener Einstieg, z. B. „Seit ich bei meinem Onkel in der Werkstatt mithelfe …“','Der Standardsatz steht in jeder zweiten Bewerbung.']],
+quiz:[{q:'Wie fängt der Text nach „Sehr geehrte Frau Yilmaz,“ an?',o:['Mit einem Großbuchstaben','Mit einem Kleinbuchstaben','Mit einem Doppelpunkt'],a:1}]},
+{id:'d-indirekt',t:'Indirekte Rede (Konjunktiv I)',kurz:'Wiedergeben, was jemand gesagt hat',tag:'Klasse 9',
+intro:`<p>Wenn du wiedergibst, was jemand gesagt hat, ohne es wörtlich zu zitieren, nimmst du die <b>indirekte Rede</b>. Dafür gibt es den <b>Konjunktiv I</b>.</p><div class="calc">Direkt: Lena sagt: „Ich bin müde.“<br>Indirekt: Lena sagt, sie <mark>sei</mark> müde.</div>`,
+steps:[['Pronomen anpassen','„ich“ wird zu „er/sie“, „wir“ zu „sie“.'],['Konjunktiv I bilden','Wortstamm + Endung: er komm-e, sie hab-e, er sei, sie könne.'],['Klingt er wie der Indikativ? Dann Konjunktiv II','„Sie haben“ (Konj. I) klingt wie normal. Dann nimm „sie hätten“.'],['Notfalls würde-Form','Wenn auch Konjunktiv II komisch klingt: „sie würden kommen“.']],
+merke:`<p><b>er/sie/es + e:</b> er gehe, sie habe, es könne. <b>sein:</b> er sei, sie seien.</p>`,bsp:[],fehler:[['Er sagt, er ist krank.','Er sagt, er sei krank.','In der Schule wird der Konjunktiv verlangt.']],
+quiz:[{q:'Tim sagt: „Ich habe Hunger.“ Indirekt:',o:['Tim sagt, er hat Hunger.','Tim sagt, er habe Hunger.','Tim sagt, ich habe Hunger.'],a:1},{q:'Sie sagen: „Wir kommen morgen.“ Indirekt:',o:['Sie sagen, sie kommen morgen.','Sie sagen, sie kämen morgen.','Sie sagen, wir kämen morgen.'],a:1,h:'„sie kommen“ klingt wie normal, also Konjunktiv II.'}]},
+{id:'d-komma',t:'Kommasetzung: das oder dass',kurz:'Die wichtigsten Kommaregeln',tag:'Wiederholung',
+intro:`<p>Die meisten Kommafehler passieren bei Nebensätzen. Und bei <b>das</b> oder <b>dass</b>.</p>`,
+steps:[['Probe: Kannst du „dieses“, „jenes“ oder „welches“ einsetzen?','Dann schreibst du <b>das</b>. Das Auto, <b>das</b> (welches) dort steht.'],['Wenn nicht: dass','Ich hoffe, <b>dass</b> es klappt. „Ich hoffe, welches es klappt“ geht nicht.'],['Komma vor Nebensatz','Vor weil, dass, obwohl, wenn, als, damit, der/die/das (Relativsatz) kommt ein Komma.'],['Aufzählungen','Komma zwischen den Teilen, außer vor „und“ / „oder“.']],
+merke:`<p><mark>„dieses / welches“ passt → das. Passt nicht → dass.</mark></p>`,bsp:[],fehler:[['Ich glaube das er kommt.','Ich glaube, dass er kommt.','„welches er kommt“ geht nicht, also dass. Und Komma davor.']],
+quiz:[{q:'Ich weiß, ___ du recht hast.',o:['das','dass'],a:1},{q:'Das Buch, ___ ich lese, ist spannend.',o:['das','dass'],a:0}]}
+]},
+
+englisch:{name:'Englisch',c:'var(--s-englisch)',desc:'If-clauses, Passive, Reported speech, Relative clauses',topics:[
+{id:'e-if',t:'If-clauses (Typ 1, 2, 3)',kurz:'Bedingungssätze: wahrscheinlich, unwahrscheinlich, vorbei',tag:'Klasse 9',
+intro:`<p>If-clauses sind „Wenn-dann-Sätze“. Es gibt drei Typen, je nachdem, wie realistisch die Bedingung ist.</p>
+<div class="tbl"><table class="t"><tr><th>Typ</th><th>if-Teil</th><th>Hauptsatz</th><th>Bedeutung</th></tr>
+<tr><td>1</td><td>simple present</td><td>will + Verb</td><td>gut möglich</td></tr>
+<tr><td>2</td><td>simple past</td><td>would + Verb</td><td>unwahrscheinlich / Traum</td></tr>
+<tr><td>3</td><td>past perfect (had + 3. Form)</td><td>would have + 3. Form</td><td>vorbei, nicht mehr änderbar</td></tr></table></div>`,
+steps:[['Frag dich: Wie realistisch?','Kann es noch passieren (1)? Eher nicht (2)? Ist es schon vorbei (3)?'],['Zeit im if-Teil setzen','Typ 1: If it <b>rains</b> … &nbsp; Typ 2: If I <b>had</b> money … &nbsp; Typ 3: If I <b>had studied</b> …'],['Hauptsatz bilden','… we <b>will stay</b> at home. / … I <b>would buy</b> a car. / … I <b>would have passed</b> the test.'],['Nie „would“ im if-Teil','Das ist der häufigste Fehler.']],
+merke:`<p><mark>Im if-Teil steht nie will oder would.</mark></p><p>Typ 2 mit „be“: If I <b>were</b> you …</p>`,
+bsp:[{q:'Bilde einen Typ-3-Satz: Emre / learn / pass the test',s:['Typ 3 = vorbei, nicht mehr änderbar.','if-Teil: past perfect → If Emre had learned,','Hauptsatz: would have + 3. Form → he would have passed the test.'],r:'If Emre had learned, he would have passed the test.'}],
+fehler:[['If I would have time, I would come.','If I had time, I would come.','Kein would im if-Teil.']],
+quiz:[{q:'If it ___ tomorrow, we will stay at home.',o:['rains','rained','would rain','will rain'],a:0},{q:'If I ___ rich, I would travel the world.',o:['am','were','will be','have been'],a:1},{q:'If she had called, I ___ her.',o:['will help','would help','would have helped','helped'],a:2}]},
+{id:'e-passive',t:'Passive voice',kurz:'Wenn wichtig ist, was passiert, nicht wer es tut',tag:'Klasse 9',
+intro:`<p>Aktiv: <i>Tom <b>cleans</b> the car.</i> Passiv: <i>The car <b>is cleaned</b> (by Tom).</i></p><p>Bildung: <mark>Form von „be“ + 3. Form (past participle)</mark>. Die Zeit steckt in „be“.</p>
+<div class="tbl"><table class="t"><tr><th>Zeit</th><th>Passiv</th></tr><tr><td>simple present</td><td>is / are cleaned</td></tr><tr><td>simple past</td><td>was / were cleaned</td></tr><tr><td>present perfect</td><td>has / have been cleaned</td></tr><tr><td>will-future</td><td>will be cleaned</td></tr><tr><td>mit can/must</td><td>can be cleaned</td></tr></table></div>`,
+steps:[['Objekt nach vorne','Das Objekt aus dem Aktivsatz wird Subjekt.'],['Zeit vom Aktiv bestimmen','Die bleibt gleich und steckt jetzt in „be“.'],['be + 3. Form','was built, are made, has been sold.'],['„by …“ nur wenn wichtig','Meistens lässt man es weg.']],
+merke:`<p><b>be (in der richtigen Zeit) + past participle</b></p>`,bsp:[],fehler:[['The house was build in 1990.','The house was built in 1990.','Dritte Form nehmen: build – built – built.']],
+quiz:[{q:'Aktiv: They built the bridge in 2010. Passiv:',o:['The bridge is built in 2010.','The bridge was built in 2010.','The bridge has built in 2010.'],a:1},{q:'English ___ all over the world.',o:['speaks','is spoken','is speak','spoken'],a:1}]},
+{id:'e-reported',t:'Reported speech',kurz:'Wiedergeben, was jemand gesagt hat',tag:'Klasse 9',
+intro:`<p>Wenn das Einleitungsverb in der Vergangenheit steht (he said …), rückt die Zeit <b>einen Schritt zurück</b> (backshift).</p>
+<div class="tbl"><table class="t"><tr><th>Direkt</th><th>Reported</th></tr><tr><td>simple present: „I like it.“</td><td>simple past: he said he liked it.</td></tr><tr><td>simple past / present perfect</td><td>past perfect: he had seen</td></tr><tr><td>will</td><td>would</td></tr><tr><td>can</td><td>could</td></tr><tr><td>today / tomorrow / here</td><td>that day / the next day / there</td></tr></table></div>`,
+steps:[['Pronomen anpassen','„I“ wird zu he/she.'],['Zeit zurückschieben','Siehe Tabelle.'],['Orts- und Zeitangaben ändern','tomorrow → the next day.']],
+merke:`<p><mark>said → eine Zeit zurück.</mark></p>`,bsp:[],fehler:[['She said she will come.','She said she would come.','will wird zu would.']],
+quiz:[{q:'„I am tired,“ Tom said. → Tom said that he ___ tired.',o:['is','was','has been','will be'],a:1},{q:'„I will call you tomorrow.“ → She said she would call me ___.',o:['tomorrow','the next day','yesterday'],a:1}]},
+{id:'e-relative',t:'Relative clauses',kurz:'who, which, that, whose',tag:'Wiederholung',
+intro:`<p>Relativsätze beschreiben ein Nomen genauer.</p><p><b>who</b> für Personen, <b>which</b> für Dinge und Tiere, <b>that</b> für beides, <b>whose</b> für „dessen/deren“.</p>`,
+steps:[['Nomen davor anschauen','Person oder Ding?'],['Pronomen wählen','The boy <b>who</b> lives next door. The bike <b>which</b> I bought.'],['Contact clause','Ist das Relativpronomen Objekt, darf es weg: The bike (which) I bought.']],
+merke:`<p><mark>who = Person, which = Ding, whose = Besitz</mark></p>`,bsp:[],fehler:[['The man which helped me','The man who helped me','Für Personen who.']],
+quiz:[{q:'The girl ___ sits next to me is from Spain.',o:['which','who','whose'],a:1},{q:'That is the man ___ car was stolen.',o:['who','which','whose'],a:2}]}
+]},
+
+bwr:{name:'BWR',c:'var(--s-bwr)',desc:'Hauptfach im kaufmännischen Zweig: Buchungssätze, Abschreibung, Lohn und Gehalt, Darlehen',topics:[
+{id:'b-buchung',t:'Buchungssatz: so geht er immer',kurz:'Grundlage für alles in BWR',tag:'Wiederholung',
+intro:`<p>Jeder Geschäftsfall wird als Buchungssatz geschrieben: <span class="f">Soll-Konto <b>an</b> Haben-Konto</span>.</p><p>Für Aktivkonten (Vermögen, z. B. Bank) gilt: Zugang links im Soll, Abgang rechts im Haben. Bei Passivkonten (Schulden) ist es genau umgekehrt.</p>`,
+img:'tkonto',cap:'Aktivkonto Bank: Zugänge im Soll, Abgänge im Haben.',
+steps:[['Welche Konten sind betroffen?','Lies den Beleg. Was verändert sich? Meistens zwei oder drei Konten.'],['Aktiv, Passiv, Aufwand oder Ertrag?','Vermögen (Maschinen, Bank) = aktiv. Schulden (Verbindlichkeiten, Darlehen) = passiv. Kosten = Aufwand (Klasse 6). Einnahmen aus Verkauf = Ertrag (Klasse 5).'],['Zugang oder Abgang?','Wird es mehr oder weniger?'],['Soll oder Haben?','Aktiv + / Aufwand: Soll. Aktiv − / Passiv + / Ertrag: Haben.'],['Satz aufschreiben','Kontonummer, Kurzname, Betrag. Soll an Haben. Summe Soll = Summe Haben.']],
+merke:`<p><b>Soll an Haben.</b> Aktiv- und Aufwandskonten nehmen im Soll zu. Passiv- und Ertragskonten nehmen im Haben zu.</p><p><mark>Summe Soll = Summe Haben. Immer prüfen.</mark></p>`,
+bsp:[{q:'Wir überweisen eine Rechnung über 2.380 € per Bank an unseren Lieferanten.',s:['Betroffen: Verbindlichkeiten (Schulden beim Lieferanten) und Bank.','Verbindlichkeiten = passiv, werden weniger → Soll.','Bank = aktiv, wird weniger → Haben.'],r:'4400 VE 2.380 € an 2800 BK 2.380 €'}],
+fehler:[['2800 BK an 4400 VE beim Bezahlen','4400 VE an 2800 BK','Geld geht raus, die Bank nimmt ab, also Haben.']],
+quiz:[{l:1,q:'Ein Kunde überweist uns 1.190 €. Welches Konto steht im Soll?',o:['2400 FO (Forderungen)','2800 BK (Bank)','4400 VE'],a:1},
+{l:1,q:'Wir kaufen Rohstoffe auf Ziel (auf Rechnung). Welches Konto steht im Haben?',o:['2800 BK','4400 VE','2600 VORST'],a:1,h:'Auf Ziel heißt: Wir haben jetzt Schulden beim Lieferanten.'},
+{l:2,q:'In welcher Seite nehmen Aufwandskonten zu?',o:['Soll','Haben'],a:0},
+{l:2,q:'Wir zahlen die Miete über 1.000 € per Bank. Welcher Buchungssatz stimmt?',o:['6700 AWMP an 2800 BK','2800 BK an 6700 AWMP','4400 VE an 2800 BK'],a:0,h:'Miete ist Aufwand (Soll), Bank nimmt ab (Haben).'},
+{l:3,q:'Maschine 10.000 € netto + 19 % USt. Bruttobetrag in €?',a:11900}]},
+{id:'b-anlagen',t:'Anlagen kaufen und abschreiben',kurz:'Maschinen und Fahrzeuge, lineare Abschreibung',tag:'Klasse 9',
+intro:`<p>Eine Maschine nutzt sich ab und verliert jedes Jahr an Wert. Diesen Wertverlust bucht man als <b>Abschreibung</b> (AfA). Er ist ein Aufwand.</p><p><b>Linear</b> heißt: jedes Jahr der gleiche Betrag.</p>`,
+steps:[['Anschaffungskosten bestimmen','Nettopreis + Anschaffungsnebenkosten (Transport, Montage) − Nachlässe. Die Umsatzsteuer gehört nicht dazu.'],['Kauf buchen','0700 MA (Netto) + 2600 VORST an 4400 VE (Brutto).'],['Jahres-AfA ausrechnen','<div class="calc">AfA = Anschaffungskosten : Nutzungsdauer</div>'],['Monatsgenau','Im Kaufjahr zählt jeder angefangene Monat ab Kaufmonat. Kauf im April = April bis Dezember = 9 Monate.'],['Abschreibung buchen','6520 ABSA an 0700 MA.']],
+merke:`<p><b>AfA pro Jahr = Anschaffungskosten : Nutzungsdauer</b></p><p><mark>Kaufmonat zählt mit.</mark></p>`,
+bsp:[{q:'Kauf einer Maschine im April für 60.000 € netto + 19 % USt auf Ziel. Nutzungsdauer 10 Jahre. Buche Kauf und Abschreibung am 31.12.',s:['USt: 60.000 € · 0,19 = 11.400 €. Brutto: 71.400 €.','Kauf: 0700 MA 60.000 €, 2600 VORST 11.400 € an 4400 VE 71.400 €.','AfA pro Jahr: 60.000 € : 10 = 6.000 €.','April bis Dezember = 9 Monate: 6.000 € : 12 · 9 = 4.500 €.'],r:'31.12.: 6520 ABSA 4.500 € an 0700 MA 4.500 €'}],
+fehler:[['Abschreibung vom Bruttopreis','Vom Nettopreis (Anschaffungskosten)','Die Vorsteuer bekommt das Unternehmen vom Finanzamt zurück.'],['Kauf im April = 8 Monate','9 Monate','Der Kaufmonat zählt mit.']],
+quiz:[{l:1,q:'Fahrzeug 36.000 € netto, Nutzungsdauer 6 Jahre. Jahres-AfA in €?',a:6000},{l:1,q:'Kauf im Oktober. Wie viele Monate werden im Kaufjahr abgeschrieben?',a:3},
+{l:2,q:'Maschine 50.000 € netto, Transport 2.000 € netto. Anschaffungskosten in €?',a:52000,h:'Nebenkosten gehören dazu.'},
+{l:2,q:'Maschine 48.000 €, Nutzungsdauer 8 Jahre, Kauf im Juli. AfA im Kaufjahr in €?',a:3000,h:'48.000 : 8 = 6.000 pro Jahr. Juli bis Dezember = 6 Monate.'},
+{l:3,q:'Welcher Buchungssatz für die Abschreibung stimmt?',o:['6520 ABSA an 0700 MA','0700 MA an 6520 ABSA','6520 ABSA an 2800 BK'],a:0},
+{l:3,q:'Maschine 60.000 €, Nutzungsdauer 10 Jahre, Kauf im Januar. Wert am Ende des 1. Jahres in €?',a:54000,h:'60.000 − 6.000'}]},
+{id:'b-personal',t:'Lohn und Gehalt',kurz:'Brutto, Netto, Abzüge buchen',tag:'Klasse 9',
+intro:`<p>Vom Bruttogehalt gehen ab: <b>Lohnsteuer</b> (+ ggf. Kirchensteuer, Soli) an das Finanzamt und der <b>Arbeitnehmeranteil zur Sozialversicherung</b>. Was übrig bleibt, ist das <b>Netto</b>, das überwiesen wird.</p><p>Der Arbeitgeber zahlt zusätzlich noch einen <b>Arbeitgeberanteil</b> zur Sozialversicherung.</p>`,
+steps:[['Netto ausrechnen','Brutto − Steuern − AN-Anteil SV = Netto.'],['Gehaltsbuchung','6300 GEH (Brutto) an 4830 VFA (Steuern), 4840 VSV (AN-Anteil), 2800 BK (Netto).'],['Arbeitgeberanteil buchen','6400 AGASV an 4840 VSV.']],
+merke:`<p><b>Gehalt im Soll immer brutto.</b></p><p>4830 VFA = Schulden beim Finanzamt. 4840 VSV = Schulden bei der Sozialversicherung.</p>`,
+bsp:[{q:'Bruttogehalt 3.000 €, Lohnsteuer usw. 400 €, AN-Anteil SV 600 €, AG-Anteil SV 600 € (vereinfachte Zahlen).',s:['Netto: 3.000 − 400 − 600 = 2.000 €.','6300 GEH 3.000 € an 4830 VFA 400 €, 4840 VSV 600 €, 2800 BK 2.000 €.','6400 AGASV 600 € an 4840 VSV 600 €.'],r:'Soll 3.000 € = Haben 400 + 600 + 2.000 €. Stimmt.'}],
+fehler:[['6300 GEH mit dem Nettobetrag','Bruttobetrag','Der Aufwand für das Unternehmen ist das ganze Brutto.']],
+quiz:[{l:1,q:'Brutto 2.500 €, Steuern 300 €, AN-Anteil SV 500 €. Netto in €?',a:1700},
+{l:2,q:'Auf welches Konto kommt die einbehaltene Lohnsteuer?',o:['4830 VFA','4840 VSV','2800 BK'],a:0,h:'VFA = Verbindlichkeiten gegenüber Finanzbehörden.'},
+{l:2,q:'Brutto 3.200 €, Steuern 380 €, AN-Anteil SV 650 €. Netto in €?',a:2170},
+{l:3,q:'Brutto 3.000 €, AG-Anteil SV 600 €. Was kostet der Mitarbeiter das Unternehmen insgesamt in €?',a:3600,h:'Brutto + Arbeitgeberanteil'}]},
+{id:'b-darlehen',t:'Darlehen und Zinsen',kurz:'Kredit aufnehmen, Zinsen berechnen und buchen',tag:'Klasse 9',
+intro:`<p>Ein Unternehmen leiht sich Geld von der Bank: ein <b>Darlehen</b>. Dafür zahlt es <b>Zinsen</b>. Zinsen sind Aufwand (7510 ZAW).</p>`,
+steps:[['Zinsformel','<div class="calc">Zinsen = Kapital · Zinssatz · Tage : (100 · 360)</div>In der kaufmännischen Rechnung hat jeder Monat 30 Tage, das Jahr 360.'],['Aufnahme buchen','2800 BK an 4250 LBKV.'],['Zinsen buchen','7510 ZAW an 2800 BK.']],
+merke:`<p><b>Z = K · p · t : (100 · 360)</b></p><p><mark>1 Monat = 30 Tage, 1 Jahr = 360 Tage.</mark></p>`,
+bsp:[{q:'Darlehen 20.000 €, Zinssatz 6 %, für 9 Monate. Wie hoch sind die Zinsen?',s:['9 Monate = 9 · 30 = 270 Tage.','Z = 20.000 · 6 · 270 : 36.000','Z = 32.400.000 : 36.000'],r:'Z = 900 €. Buchung: 7510 ZAW 900 € an 2800 BK 900 €'}],
+fehler:[['Ein Jahr = 365 Tage','360 Tage','In BWR rechnet man kaufmännisch.']],
+quiz:[{l:1,q:'10.000 € zu 5 % für ein ganzes Jahr. Zinsen in €?',a:500},
+{l:2,q:'Buchung der Darlehensaufnahme:',o:['2800 BK an 4250 LBKV','4250 LBKV an 2800 BK','7510 ZAW an 2800 BK'],a:0},
+{l:2,q:'15.000 € zu 4 % für 6 Monate. Zinsen in €?',a:300,h:'6 Monate = 180 Tage'},
+{l:3,q:'8.000 € zu 7,5 % für 90 Tage. Zinsen in €?',a:150}]}
+]},
+
+physik:{name:'Physik',c:'var(--s-physik)',desc:'Elektrischer Widerstand, Ohmsches Gesetz',topics:[
+{id:'p-ohm',t:'Ohmsches Gesetz',kurz:'Spannung, Stromstärke, Widerstand',tag:'Zweig I',wpf:'I',
+intro:`<p>Stell dir Strom wie Wasser in einem Rohr vor. Die <b>Spannung U</b> (Volt, V) ist der Druck. Die <b>Stromstärke I</b> (Ampere, A) ist, wie viel Wasser fließt. Der <b>Widerstand R</b> (Ohm, Ω) ist, wie eng das Rohr ist.</p>`,
+img:'ohm',cap:'Formeldreieck: Halt den Finger auf die gesuchte Größe.',
+steps:[['Gegebenes aufschreiben','Mit Einheit: U = 12 V, R = 4 Ω.'],['Formel aus dem Dreieck','I gesucht: U steht oben, R unten, also I = U : R.'],['Einsetzen und rechnen','I = 12 V : 4 Ω = 3 A.'],['Einheit prüfen','Spannung in V, Strom in A, Widerstand in Ω. mA erst in A umrechnen: 500 mA = 0,5 A.']],
+merke:`<p><b>U = R · I</b></p><p><mark>mA → A: durch 1000.</mark></p>`,
+bsp:[{q:'Eine Lampe hat 230 V und es fließen 0,5 A. Wie groß ist ihr Widerstand?',s:['Gegeben: U = 230 V, I = 0,5 A. Gesucht: R.','R = U : I','R = 230 : 0,5'],r:'R = 460 Ω'}],
+fehler:[['I = 500 mA direkt einsetzen','I = 0,5 A','Erst in Ampere umrechnen.']],
+quiz:[{q:'U = 9 V, R = 3 Ω. I in A?',a:3},{q:'I = 2 A, R = 6 Ω. U in V?',a:12}]}
+]}
+};
+
+/* ---------- Fortschritt (nur in diesem Browser) ---------- */
+let P={};
+try{P=JSON.parse(localStorage.getItem('emre-lernheft')||'{}')}catch(e){P={}}
+/* ---------- Speicher: Supabase (zentral, ohne Anmeldung) ---------- */
+const SUPA_URL='__SUPA_URL__', SUPA_KEY='__SUPA_KEY__';
+const ONLINE=!SUPA_URL.startsWith('__');
+const H={apikey:SUPA_KEY,Authorization:'Bearer '+SUPA_KEY,'Content-Type':'application/json'};
+function rpc(fn,args,keep){return fetch(SUPA_URL+'/rest/v1/rpc/'+fn,{method:'POST',keepalive:!!keep,cache:'no-store',headers:H,body:JSON.stringify(args)})}
+let DEV='';try{DEV=localStorage.getItem('emre-dev')||'';if(!DEV){DEV=Math.random().toString(36).slice(2,8);localStorage.setItem('emre-dev',DEV)}}catch(e){DEV='x'+Math.random().toString(36).slice(2,6)}
+let ready=false,saveT=null,saving=false,saveAgain=false;
+function save(){try{localStorage.setItem('emre-lernheft',JSON.stringify(P))}catch(e){}
+  if(ONLINE&&ready){clearTimeout(saveT);saveT=setTimeout(pushP,1500)}}
+async function pushP(){if(saving){saveAgain=true;return}saving=true;
+  try{await rpc('save_progress',{dev:'emre_'+DEV,p:P})}catch(e){}
+  saving=false;if(saveAgain){saveAgain=false;pushP()}}
+function mergeP(a,b){const o=JSON.parse(JSON.stringify(a||{}));for(const k in b||{}){const x=o[k]||{},y=b[k]||{};
+  const r=[...new Set([...(x.r||[]),...(y.r||[])])];const w={...(x.w||{})};for(const i in y.w||{})w[i]=Math.max(w[i]||0,y.w[i]);
+  o[k]={...x,...y,r,w,ok:!!(x.ok||y.ok),last:Math.max(x.last||0,y.last||0)}}return o}
+/* Lernzeit: zählt nur, wenn die Seite sichtbar ist und Emre in den letzten 2 Minuten etwas gemacht hat */
+const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+let lastAct=Date.now(),curTopic='start',DAY=null,dayDirty=0,dayWriting=false;
+['pointerdown','keydown','scroll','touchstart'].forEach(ev=>addEventListener(ev,()=>{lastAct=Date.now()},{passive:true}));
+try{const d=JSON.parse(localStorage.getItem('emre-day')||'null');if(d&&d.date===today())DAY=d}catch(e){}
+function dayObj(){const k=today();if(!DAY||DAY.date!==k)DAY={date:k,dev:DEV,total:0,topics:{},right:0,wrong:0,first:Date.now(),last:Date.now()};return DAY}
+function addDay(f){const d=dayObj();f(d);d.last=Date.now();dayDirty++;try{localStorage.setItem('emre-day',JSON.stringify(d))}catch(e){}}
+setInterval(()=>{if(document.visibilityState==='visible'&&Date.now()-lastAct<120000&&curTopic!=='eltern'){addDay(d=>{d.total+=5;d.topics[curTopic]=(d.topics[curTopic]||0)+5})}},5000);
+setInterval(()=>{if(dayDirty)flushDay()},30000);
+function flushDay(keep){if(!ONLINE||!DAY||(dayWriting&&!keep))return;dayWriting=true;dayDirty=0;
+  rpc('save_day',{k:DAY.date+'_'+DEV,d:DAY},keep).then(r=>{if(!r.ok)dayDirty++}).catch(()=>{dayDirty++}).finally(()=>{dayWriting=false})}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'){if(dayDirty)flushDay(true);if(ONLINE&&ready)rpc('save_progress',{dev:'emre_'+DEV,p:P},true)}});
+ready=ONLINE;if(ONLINE&&Object.keys(P).length)setTimeout(pushP,2000);
+function done(id){return !!(P[id]&&P[id].ok)}
+function subjProg(k){const t=DATA[k].topics;return [t.filter(x=>done(x.id)).length,t.length]}
+
+/* ---------- Ansichten ---------- */
+const app=document.getElementById('app'),crumb=document.getElementById('crumb'),back=document.getElementById('back');
+const img=(x)=>typeof x==='function'?x():(IMG[x]?IMG[x]():'');
+
+const LIN=()=>DATA.mathe.topics.filter(t=>t.probe);
+const linDone=()=>LIN().filter(t=>done(t.id)).length;
+const linProg=()=>Math.round(linDone()/LIN().length*100);
+function viewStart(){
+  crumb.textContent='';back.hidden=true;
+  const cards=Object.entries(DATA).map(([k,s])=>{const [d,n]=subjProg(k);return `<a class="subj" href="#${k}" style="--c:${s.c}"><span class="n">${s.name}</span><span class="d">${s.desc}</span><span class="meter-row"><span class="meter" style="--c:${s.c}"><i style="width:${n?d/n*100:0}%"></i></span>${d}/${n}</span></a>`}).join('');
+  app.innerHTML=`
+  <section class="hello"><span class="hand">Hey Emre,</span><h1>Was lernst du heute?</h1><p class="muted">Jedes Thema ist gleich aufgebaut: erst verstehen, dann Schritt für Schritt, dann ein Beispiel zum Mitrechnen, dann selbst probieren.</p></section>
+  <section class="probe-card"><span class="tag probe">Probe-Thema</span><h2>Lineare Funktionen</h2><p>Genau das, was in deinem Heft steht: Normalform, Steigung, Gerade aus zwei Punkten, parallel und senkrecht, Verschieben, Textaufgaben. Arbeite die Themen der Reihe nach durch und mach am Ende das Probe-Training.</p>
+   <div class="meter-row"><span class="meter" style="--c:var(--s-mathe)"><i style="width:${linProg()}%"></i></span>${linDone()} von ${LIN().length}</div>
+   <div class="row"><a class="btn" href="#${(LIN().find(t=>!done(t.id))||LIN()[0]).id}">${linDone()?'Weitermachen':'Jetzt starten'}</a><a class="btn ghost" href="#m-lin-test">Probe-Training</a></div></section>
+  <section class="subjects">${cards}</section>
+  <section class="sheet plan"><h2>Probe zurück? So holst du die Punkte nächstes Mal</h2>
+   <ol><li>Markier jede Aufgabe, bei der du Punkte verloren hast.</li><li>Schreib daneben, zu welchem Thema sie gehört. Die Themen findest du unter <a href="#mathe">Mathe</a>.</li><li>Lies im Thema „Darum geht's“ und die Schritte. Langsam.</li><li>Rechne das Beispiel mit, Schritt für Schritt aufdecken. Erst selber überlegen, dann klicken.</li><li>Mach die Aufgaben unter „Jetzt du“. Alle richtig? Dann die Probe-Aufgabe nochmal ohne Hilfe rechnen.</li></ol>
+   <p class="small muted">Lieber jeden Tag 20 Minuten als einmal 3 Stunden vor der Schulaufgabe.</p></section>
+  <p class="small muted">Inhalte nach dem LehrplanPLUS Realschule Bayern, Jahrgangsstufe 9. Zugeschnitten auf den kaufmännischen Zweig (Wahlpflichtfächergruppe II). Physik ist nur ein Ausblick.</p>`;
+}
+
+function viewSubject(k){
+  const s=DATA[k];crumb.textContent=s.name;back.hidden=false;back.onclick=()=>{location.hash='start'};
+  const list=s.topics.map(t=>`<a class="topic" href="#${t.id}" style="--c:${s.c}"><span class="chk ${done(t.id)?'on':''}" aria-label="${done(t.id)?'verstanden':'offen'}">${done(t.id)?'✓':''}</span><span class="tx"><span class="t">${t.t}</span><span class="small muted">${t.kurz}</span><span class="tag ${t.probe?'probe':t.wpf==='I'?'i':''}">${t.tag}</span></span></a>`).join('');
+  const [d,n]=subjProg(k);
+  app.innerHTML=`<section class="head" style="--c:${s.c}"><h1>${s.name}</h1><p class="muted">${s.desc}</p><div class="meter-row"><span class="meter" style="--c:${s.c}"><i style="width:${d/n*100}%"></i></span>${d} von ${n} verstanden</div></section><section class="topics">${list}</section>`;
+}
+
+function viewTopic(k,t){
+  const s=DATA[k];crumb.textContent=s.name+' · '+t.t;back.hidden=false;back.onclick=()=>{location.hash=k};
+  let n=0;const sec=(title,id,body)=>`<section class="sheet" id="${id}" style="--c:${s.c}"><div class="sec-title"><span class="no">${++n}</span><h2>${title}</h2></div>${body}</section>`;
+  let h=`<section class="head" style="--c:${s.c}"><span class="tag ${t.probe?'probe':t.wpf==='I'?'i':''}">${t.tag}</span><h1>${t.t}</h1><p class="muted">${t.kurz}</p></section>`;
+  if(t.test){h+=sec('So geht\'s','darum',t.intro);}
+  else{
+  const toc=[['darum','Darum geht\'s'],['schritte','Schritt für Schritt'],['merke','Merke']];
+  if(t.bsp&&t.bsp.length)toc.push(['beispiel','Beispiel']);
+  if(t.fehler&&t.fehler.length)toc.push(['fehler','Typische Fehler']);
+  toc.push(['ueben','Jetzt du']);
+  h+=`<nav class="toc" aria-label="Abschnitte">${toc.map(([i,l])=>`<a href="#${t.id}" data-go="${i}">${l}</a>`).join('')}</nav>`;
+  h+=sec('Darum geht\'s','darum',t.intro+(t.img?`<div class="fig">${img(t.img)}</div><p class="cap">${t.cap||''}</p>`:''));
+  h+=sec('Schritt für Schritt','schritte',`<ol class="steps">${t.steps.map(([a,b])=>`<li><div><h3>${a}</h3><p>${b}</p></div></li>`).join('')}</ol>`);
+  h+=sec('Merke','merke',`<div class="merke">${t.merke}</div>`+(t.img2?`<div class="fig">${img(t.img2)}</div><p class="cap">${t.cap2||''}</p>`:''));
+  if(t.bsp&&t.bsp.length) h+=sec('Beispiel zum Mitrechnen','beispiel',`<p class="muted small">Überleg bei jedem Schritt erst selbst, dann deck ihn auf.</p>`+t.bsp.map((b,i)=>`<div class="ex" data-ex="${i}"><p class="q">${b.q}</p><ol>${b.s.map(x=>`<li hidden>${x}</li>`).join('')}</ol><p class="res" hidden>${b.r}</p><div class="row"><button class="btn" data-next>Ersten Schritt zeigen</button><button class="btn ghost" data-all>Alles zeigen</button></div></div>`).join(''));
+  if(t.fehler&&t.fehler.length) h+=sec('Typische Fehler','fehler',t.fehler.map(([a,b,c])=>`<div class="err"><div class="no"><b>So nicht:</b><br><span class="strike">${a}</span></div><div class="yes"><b>Richtig:</b><br>${b}</div><p class="why">${c}</p></div>`).join(''));
+  }
+  h+=sec(t.test?'Aufgaben':'Jetzt du','ueben',`<p class="score" id="score"></p><div class="quiz">${t.quiz.map((q,i)=>quizHTML(q,i)).join('')}</div>`);
+  h+=`<section class="sheet done"><div><h2>Hast du's verstanden?</h2><p class="muted small">Häkchen setzen, wenn du die Aufgaben ohne Hilfe schaffst.</p></div><button class="btn ${done(t.id)?'ok':''}" id="okbtn">${done(t.id)?'✓ Verstanden':'Ja, verstanden'}</button></section>`;
+  app.innerHTML=h;
+  app.querySelectorAll('[data-go]').forEach(a=>a.onclick=e=>{e.preventDefault();document.getElementById(a.dataset.go).scrollIntoView({behavior:'smooth',block:'start'})});
+  app.querySelectorAll('.ex').forEach(ex=>{
+    const lis=[...ex.querySelectorAll('li')],res=ex.querySelector('.res'),nb=ex.querySelector('[data-next]'),ab=ex.querySelector('[data-all]');
+    const fin=()=>{res.hidden=false;nb.hidden=true;ab.hidden=true};
+    nb.onclick=()=>{const h=lis.find(l=>l.hidden);if(h){h.hidden=false;nb.textContent='Nächster Schritt'}if(!lis.some(l=>l.hidden)){nb.textContent='Ergebnis zeigen';nb.onclick=fin}};
+    ab.onclick=()=>{lis.forEach(l=>l.hidden=false);fin()};
+  });
+  const st=(P[t.id]=P[t.id]||{});const right=new Set(st.r||[]);
+  const upd=()=>{document.getElementById('score').textContent=`${right.size} von ${t.quiz.length} richtig`;st.r=[...right];save()};upd();
+  t.quiz.forEach((q,i)=>{
+    const el=app.querySelector(`[data-q="${i}"]`),fb=el.querySelector('.fb');let tries=0;
+    const sol=()=>q.o?q.o[q.a]:(q.s||String(q.a).replace('.',','));
+    const show=(ok)=>{fb.hidden=false;tries++;
+      st.last=Date.now();
+      if(ok){fb.className='fb good';fb.textContent='Richtig!';if(!right.has(i))addDay(d=>d.right++);right.add(i);upd();}
+      else{fb.className='fb bad';st.w=st.w||{};st.w[i]=(st.w[i]||0)+1;addDay(d=>d.wrong++);save();fb.innerHTML=tries<2&&q.h?`Noch nicht. Tipp: ${q.h}`:(tries<2?'Noch nicht. Versuch es nochmal.':`Noch nicht. <span class="sol">Lösung: <b>${sol()}</b>${q.h?' ('+q.h+')':''}</span>`);}};
+    if(q.o){el.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{const ok=+b.dataset.i===q.a;b.classList.add(ok?'right':'wrong');show(ok)});}
+    else{const inp=el.querySelector('input'),go=()=>{const v=num(inp.value);show(!isNaN(v)&&Math.abs(v-q.a)<=(q.tol||0.01))};
+      el.querySelector('[data-check]').onclick=go;
+      el.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{const k=b.dataset.k;if(k==='−'){inp.value=inp.value.startsWith('−')||inp.value.startsWith('-')?inp.value.slice(1):'−'+inp.value}else inp.value+=k;inp.focus()});inp.onkeydown=e=>{if(e.key==='Enter')go()};}
+  });
+  document.getElementById('okbtn').onclick=e=>{st.ok=!st.ok;save();e.target.className='btn '+(st.ok?'ok':'');e.target.textContent=st.ok?'✓ Verstanden':'Ja, verstanden'};
+}
+function num(x){x=x.replace(/\s/g,'').replace(/[−–]/g,'-').replace(/€/g,'');
+  if(/^-?\d{1,3}(\.\d{3})+(,\d+)?$/.test(x))x=x.replace(/\./g,'');
+  x=x.replace(/,/g,'.');
+  if(x.includes('/')){const [a,b]=x.split('/');const A=parseFloat(a),B=parseFloat(b);return B?A/B:NaN}
+  return parseFloat(x)}
+const fmt=s=>{s=Math.round(s/60);return s<60?s+' min':Math.floor(s/60)+' h '+(s%60)+' min'};
+let parentUnsub=null;
+function viewParent(){
+  crumb.textContent='Eltern-Übersicht';back.hidden=false;back.onclick=()=>{location.hash='start'};
+  let hasPin=false;try{hasPin=!!localStorage.getItem('emre-pin')}catch(e){}
+  if(ONLINE&&!hasPin){app.innerHTML=`<section class="sheet" style="max-width:360px"><h2>Eltern-Übersicht</h2><p class="muted">Bitte PIN eingeben.</p><form id="pinf" class="row"><input id="pin" type="password" inputmode="numeric" autocomplete="off" aria-label="PIN" style="font:inherit;font-size:1.2rem;padding:8px 12px;border:2px solid var(--line);border-radius:10px;width:8em;background:var(--paper);color:var(--ink)"><button class="btn">Öffnen</button></form><p class="fb bad" id="pinerr" hidden>Falsche PIN.</p></section>`;
+    document.getElementById('pinf').onsubmit=async e=>{e.preventDefault();const v=document.getElementById('pin').value.trim();
+      try{const r=await rpc('parent_data',{pin:v});const j=r.ok?await r.json():null;if(j){try{localStorage.setItem('emre-pin',v)}catch(e){}viewParent()}else document.getElementById('pinerr').hidden=false}catch(err){const el=document.getElementById('pinerr');el.textContent='Keine Verbindung. Bitte später nochmal.';el.hidden=false}};return}
+  app.innerHTML=`<section class="head" style="--c:var(--s-mathe)"><h1>Emres Lernfortschritt</h1><p class="muted" id="psync">Daten werden geladen …</p></section><div id="pbody" class="wrap" style="gap:18px;width:100%;min-width:0"></div>`;
+  const body=document.getElementById('pbody'),sync=document.getElementById('psync');
+  const draw=(days,prog)=>{
+    const byDate={};days.forEach(d=>byDate[d.date]=d);
+    const list=[];for(let i=13;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const k=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');list.push({k,d,v:byDate[k]})}
+    const week=list.slice(7).reduce((a,x)=>a+(x.v?.total||0),0),todayS=list[13].v?.total||0;
+    const lastTs=Math.max(0,...days.map(d=>d.last||0));
+    const max=Math.max(1800,...list.map(x=>x.v?.total||0));
+    const wd=['So','Mo','Di','Mi','Do','Fr','Sa'];
+    const bars=list.map((x,i)=>{const h=Math.round((x.v?.total||0)/max*120);return `<g><rect x="${i*26+6}" y="${130-h}" width="18" height="${h}" rx="3" style="fill:${i===13?'var(--blue)':'var(--s-mathe)'};opacity:${i===13?1:.55}"/><text class="tick" x="${i*26+15}" y="148" text-anchor="middle">${wd[x.d.getDay()]}</text>${(x.v?.total||0)>=60?`<text class="tick" x="${i*26+15}" y="${124-h}" text-anchor="middle">${Math.round(x.v.total/60)}</text>`:''}</g>`}).join('');
+    const tot={};days.forEach(d=>{for(const k in d.topics||{})tot[k]=(tot[k]||0)+d.topics[k]});
+    let rows='';
+    for(const [k,sj] of Object.entries(DATA))for(const t of sj.topics){const p=prog[t.id]||{};const sec=tot[t.id]||0;if(!sec&&!p.r&&!p.ok&&!p.w)continue;
+      const wr=Object.values(p.w||{}).reduce((a,b)=>a+b,0);
+      rows+=`<tr><td><a href="#${t.id}">${t.t}</a><br><span class="small muted">${sj.name}</span></td><td>${fmt(sec)}</td><td>${(p.r||[]).length} / ${t.quiz.length}</td><td>${wr}</td><td>${p.ok?'✓':''}</td><td class="small">${p.last?new Date(p.last).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})+' '+new Date(p.last).toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'}):''}</td></tr>`}
+    const weak=[];for(const [k,sj] of Object.entries(DATA))for(const t of sj.topics){const p=prog[t.id];if(!p||!p.w)continue;for(const i in p.w){if(!(p.r||[]).includes(+i)&&t.quiz[i])weak.push(`<li><b>${t.t}:</b> ${t.quiz[i].q} <span class="muted small">(${p.w[i]}× falsch, noch nicht gelöst)</span></li>`)}}
+    body.innerHTML=`
+    <section class="subjects" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr))">
+      <div class="sheet" style="gap:4px"><span class="small muted">Heute</span><span class="score" style="font-size:1.6rem">${fmt(todayS)}</span></div>
+      <div class="sheet" style="gap:4px"><span class="small muted">Letzte 7 Tage</span><span class="score" style="font-size:1.6rem">${fmt(week)}</span></div>
+      <div class="sheet" style="gap:4px"><span class="small muted">Zuletzt aktiv</span><span class="score" style="font-size:1.1rem">${lastTs?new Date(lastTs).toLocaleString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'noch nie'}</span></div>
+      <div class="sheet" style="gap:4px"><span class="small muted">Probe-Thema</span><span class="score" style="font-size:1.6rem">${LIN().filter(t=>(prog[t.id]||{}).ok).length} / ${LIN().length}</span><span class="small muted">verstanden</span></div>
+    </section>
+    <section class="sheet"><h2>Lernzeit pro Tag (Minuten)</h2><div class="fig"><svg class="sv" viewBox="0 0 370 155" width="370" role="img" aria-label="Lernminuten der letzten 14 Tage">${bars}</svg></div><p class="small muted">Gezählt wird nur, wenn die App offen ist und Emre in den letzten 2 Minuten etwas getippt oder gescrollt hat.</p></section>
+    <section class="sheet"><h2>Themen</h2>${rows?`<div class="tbl"><table class="t"><tr><th>Thema</th><th>Zeit</th><th>Aufgaben richtig</th><th>Fehlversuche</th><th>Verstanden</th><th>Zuletzt</th></tr>${rows}</table></div>`:'<p class="muted">Noch keine Themen bearbeitet. Sobald Emre loslegt, steht hier jedes Thema mit Zeit und Ergebnis.</p>'}</section>
+    <section class="sheet"><h2>Hier hakt es noch</h2>${weak.length?`<ul style="margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px">${weak.slice(0,15).join('')}</ul>`:'<p class="muted">Keine offenen Fehler. Aufgaben, die Emre falsch hatte und noch nicht gelöst hat, erscheinen hier.</p>'}</section>`;
+  };
+  if(!ONLINE){sync.textContent='Speicher noch nicht verbunden: Es werden nur die Daten von diesem Gerät angezeigt.';draw(DAY?[DAY]:[],P);return}
+  let pin='';try{pin=localStorage.getItem('emre-pin')||''}catch(e){}
+  const load=async()=>{try{const r=await rpc('parent_data',{pin});if(!r.ok)throw 0;const res=await r.json();
+    if(res===null){clearInterval(iv);try{localStorage.removeItem('emre-pin')}catch(e){}viewParent();return}
+    const byDate={};(res.days||[]).forEach(d=>{const x=byDate[d.date]||(byDate[d.date]={date:d.date,total:0,topics:{},right:0,wrong:0,last:0});
+      x.total+=d.total||0;x.right+=d.right||0;x.wrong+=d.wrong||0;x.last=Math.max(x.last,d.last||0);for(const k in d.topics||{})x.topics[k]=(x.topics[k]||0)+d.topics[k]});
+    draw(Object.values(byDate),(res.progress||[]).reduce((a,p)=>mergeP(a,p),{}));sync.textContent='Live. Zuletzt aktualisiert: '+new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit',second:'2-digit'})+' (alle 20 Sekunden)';}
+    catch(e){sync.textContent='Daten gerade nicht erreichbar. Neuer Versuch in 20 Sekunden.'}};
+  const iv=setInterval(load,20000);load();
+  parentUnsub=()=>clearInterval(iv);
+}
+window.addEventListener('hashchange',()=>{if(parentUnsub&&location.hash!=='#eltern'){parentUnsub();parentUnsub=null}});
+function quizHTML(q,i){
+  return `<div class="qq" data-q="${i}"><span class="qn">Aufgabe ${i+1}${q.l?`<span class="lv" title="${['','leicht','mittel','schwer'][q.l]}">${[1,2,3].map(k=>`<i class="${k<=q.l?'on':''}"></i>`).join('')}</span> ${['','leicht','mittel','schwer'][q.l]}`:''}</span><p>${q.q}</p>`+
+  (q.o?`<div class="opts">${q.o.map((o,j)=>`<button class="opt" data-i="${j}">${o}</button>`).join('')}</div>`
+      :`<div class="row"><input id="in-${i}" inputmode="decimal" autocomplete="off" aria-label="Deine Antwort" placeholder="z. B. −2 oder 1/2"><span class="keys"><button class="key" data-k="−" aria-label="Minus einfügen">−</button><button class="key" data-k="/" aria-label="Bruchstrich einfügen">/</button></span><button class="btn" data-check>Prüfen</button></div>`)+
+  `<div class="fb" hidden aria-live="polite"></div></div>`;
+}
+
+function route(keep){
+  const h=(location.hash||'#start').slice(1);curTopic=h;
+  if(h==='eltern'){viewParent()}
+  else if(DATA[h]){viewSubject(h)}
+  else{let f=null;for(const [k,s] of Object.entries(DATA)){const t=s.topics.find(x=>x.id===h);if(t){f=[k,t];break}}
+    if(f)viewTopic(f[0],f[1]);else viewStart();}
+  if(keep!==true)window.scrollTo(0,0);
+}
+window.addEventListener('hashchange',route);route();
+</script>
+
+</body>
+</html>
