@@ -795,9 +795,9 @@ quiz:[{q:'U = 9 V, R = 3 Ω. I in A?',a:3},{q:'I = 2 A, R = 6 Ω. U in V?',a:12}
 let P={};
 try{P=JSON.parse(localStorage.getItem('emre-lernheft')||'{}')}catch(e){P={}}
 /* ---------- Speicher: Supabase (zentral, ohne Anmeldung) ---------- */
-const SUPA_URL='__SUPA_URL__', SUPA_KEY='__SUPA_KEY__';
+const SUPA_URL='https://ssdjrvflprqhjabhshkf.supabase.co', SUPA_KEY='sb_publishable_IntmyuNl5u2O9JYoCssB2A_JgHcbWD_';
 const ONLINE=!SUPA_URL.startsWith('__');
-const H={apikey:SUPA_KEY,Authorization:'Bearer '+SUPA_KEY,'Content-Type':'application/json'};
+const H=SUPA_KEY.startsWith('sb_')?{apikey:SUPA_KEY,'Content-Type':'application/json'}:{apikey:SUPA_KEY,Authorization:'Bearer '+SUPA_KEY,'Content-Type':'application/json'};
 function rpc(fn,args,keep){return fetch(SUPA_URL+'/rest/v1/rpc/'+fn,{method:'POST',keepalive:!!keep,cache:'no-store',headers:H,body:JSON.stringify(args)})}
 let DEV='';try{DEV=localStorage.getItem('emre-dev')||'';if(!DEV){DEV=Math.random().toString(36).slice(2,8);localStorage.setItem('emre-dev',DEV)}}catch(e){DEV='x'+Math.random().toString(36).slice(2,6)}
 let ready=false,saveT=null,saving=false,saveAgain=false;
